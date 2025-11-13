@@ -535,21 +535,6 @@
 
         // 페이지 로드 시 URL 파라미터로 필드 채우기
         fillFieldsFromUrl();
-
-        // 전화번호 필드에서 포커스를 잃으면 자동 조회 (선택사항)
-        document.getElementById('user_phone').addEventListener('blur', async function() {
-            const phone = this.value.trim();
-            // URL 파라미터로 이미 채워진 경우나 비어있는 경우는 조회하지 않음
-            if (phone && !this.disabled && !getUrlParameter('phone')) {
-                const submission = await loadSubmissionsByPhone(phone);
-                if (submission) {
-                    // 전화번호는 이미 입력되어 있으므로 제외하고 나머지만 채우기
-                    const data = { ...submission };
-                    delete data.phone;
-                    fillFormWithData(data);
-                }
-            }
-        });
     </script>
 </body>
 </html>
