@@ -272,7 +272,8 @@
     <script>
         // Google Apps Script URL
         const SCRIPT_URL = 
-        'https://script.google.com/macros/s/AKfycbw1J2sCkXzIRcxe0SbEQNR8t0jVIErKOHm0CAt-Ha7C0H4O21WKELujMxZGhM42coWg/exec'
+        'https://script.google.com/macros/s/AKfycbz4vhvKd3Vsm_0gv5QcEDZBVYcukqA21qk_3vGoVHPwDpfb3k5-P1VbBqpPyO0qa5o/exec'
+        // 'https://script.google.com/macros/s/AKfycbw1J2sCkXzIRcxe0SbEQNR8t0jVIErKOHm0CAt-Ha7C0H4O21WKELujMxZGhM42coWg/exec'
 
 
         // URL 파라미터에서 값을 읽어오는 함수
@@ -434,12 +435,41 @@
             messageEl.classList.remove('show');
         }
 
+        // localStorage에 제출된 전화번호 저장
+        function saveSubmittedPhone(phone) {
+            if (phone) {
+                const phoneRaw = phone.toString().trim().replaceAll('-', '').replaceAll(' ', '');
+                localStorage.setItem('submitted_phone', phoneRaw);
+            }
+        }
+
+        // localStorage에서 제출된 전화번호 확인
+        function hasSubmittedPhone(phone) {
+            if (!phone) return false;
+            const phoneRaw = phone.toString().trim().replaceAll('-', '').replaceAll(' ', '');
+            const savedPhone = localStorage.getItem('submitted_phone');
+            return savedPhone && savedPhone === phoneRaw;
+        }
+
         // 전화번호로 데이터 존재 여부 확인
         async function checkDataExists(phone) {
+            // localStorage에 저장된 전화번호가 있으면 바로 true 반환
+            if (hasSubmittedPhone(phone)) {
+                return true;
+            }
+            
+            // localStorage에 없으면 서버에 확인
             try {
                 const response = await fetch(`${SCRIPT_URL}?phone=${encodeURIComponent(phone)}`);
                 const data = await response.json();
-                return data.submissions && data.submissions.length > 0;
+                const exists = data.submissions && data.submissions.length > 0;
+                
+                // 서버에 데이터가 있으면 localStorage에도 저장
+                if (exists) {
+                    saveSubmittedPhone(phone);
+                }
+                
+                return exists;
             } catch (error) {
                 console.error('데이터 확인 오류:', error);
                 return false;
@@ -482,6 +512,9 @@
                 // no-cors 모드에서는 응답을 읽을 수 없으므로 제출 후 바로 성공 메시지 표시
                 const successMessage = exists ? '데이터가 수정되었습니다!' : '제출이 완료되었습니다!';
                 showMessage(successMessage, 'success');
+                
+                // 제출 완료 후 localStorage에 전화번호 저장
+                saveSubmittedPhone(formData.user_phone);
                 
                 // 성공 후 폼 초기화 (고정된 필드는 유지)
                 setTimeout(() => {
