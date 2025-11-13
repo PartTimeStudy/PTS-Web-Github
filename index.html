@@ -205,6 +205,19 @@
             display: block;
         }
 
+        .update-timestamp {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 10px;
+            border-radius: 4px;
+            z-index: 1000;
+            font-family: 'Courier New', monospace;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -219,6 +232,13 @@
                 font-size: 24px;
                 margin-bottom: 25px;
             }
+
+            .update-timestamp {
+                font-size: 10px;
+                padding: 4px 8px;
+                bottom: 5px;
+                right: 5px;
+            }
         }
     </style>
 </head>
@@ -229,6 +249,8 @@
             <div class="loading-text">주소를 불러오는 중...</div>
         </div>
     </div>
+
+    <div class="update-timestamp" id="updateTimestamp"></div>
 
     <div class="container">
         <h1>입력 폼</h1>
@@ -533,8 +555,23 @@
             }
         });
 
+        // 페이지 버전 정보
+        const PAGE_VERSION = '1.0.0';
+        const BUILD_DATE = '2024-12-19';
+
+        // 버전 표시
+        function displayVersion() {
+            const versionEl = document.getElementById('updateTimestamp');
+            if (versionEl) {
+                versionEl.textContent = `v${PAGE_VERSION} (${BUILD_DATE})`;
+            }
+        }
+
         // 페이지 로드 시 URL 파라미터로 필드 채우기
         fillFieldsFromUrl();
+        
+        // 페이지 로드 시 버전 표시
+        displayVersion();
     </script>
 </body>
 </html>
