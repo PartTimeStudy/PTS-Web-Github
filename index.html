@@ -294,7 +294,8 @@
     <script>
         // Google Apps Script URL
         const SCRIPT_URL = 
-        'https://script.google.com/macros/s/AKfycbzkaO6dP0iQL7RQaXg8C8_v85WxrMG8VpBPN0UG4lq4uiH5RKmnNm9v9IKpLJ8nbBwL/exec'
+        'https://script.google.com/macros/s/AKfycbyFguNknCCDi3L9ppPQzrL4p68bAAJXzJzXlpNYIwlWYRg18YWYAZd-5Nw_4mPUbxPG/exec'
+        // 'https://script.google.com/macros/s/AKfycbzkaO6dP0iQL7RQaXg8C8_v85WxrMG8VpBPN0UG4lq4uiH5RKmnNm9v9IKpLJ8nbBwL/exec'
         //'https://script.google.com/macros/s/AKfycbz4vhvKd3Vsm_0gv5QcEDZBVYcukqA21qk_3vGoVHPwDpfb3k5-P1VbBqpPyO0qa5o/exec'
         // 'https://script.google.com/macros/s/AKfycbw1J2sCkXzIRcxe0SbEQNR8t0jVIErKOHm0CAt-Ha7C0H4O21WKELujMxZGhM42coWg/exec'
 
@@ -563,14 +564,17 @@
             console.log("=== 폼 제출 시작 ===");
 
             const submitBtn = document.getElementById('submitBtn');
+            // 전화번호를 명시적으로 문자열로 보장 (leading 0 보존)
+            const phoneValue = document.getElementById('user_phone').value;
             const formData = {
                 user_name: document.getElementById('user_name').value,
-                user_phone: document.getElementById('user_phone').value,
+                user_phone: String(phoneValue), // 명시적으로 문자열로 변환
                 user_address: document.getElementById('user_address').value,
                 deposit: document.getElementById('deposit').value,
                 prize: document.getElementById('prize').value
             };
             console.log("제출할 폼 데이터:", JSON.stringify(formData));
+            console.log("전화번호 원본 값:", phoneValue, "타입:", typeof phoneValue);
 
             // 로딩 상태
             submitBtn.disabled = true;
@@ -636,7 +640,7 @@
         });
 
         // 페이지 버전 정보
-        const PAGE_VERSION = '1.0.1';
+        const PAGE_VERSION = '1.0.2';
         const BUILD_DATE = '2025-11-14';
 
         // 버전 표시
