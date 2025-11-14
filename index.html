@@ -491,37 +491,11 @@
             messageEl.classList.remove('show');
         }
 
-        // localStorage에 제출된 전화번호 저장
-        function saveSubmittedPhone(phone) {
-            if (phone) {
-                const phoneRaw = phone.toString().trim().replaceAll('-', '').replaceAll(' ', '');
-                localStorage.setItem('submitted_phone', phoneRaw);
-            }
-        }
-
-        // localStorage에서 제출된 전화번호 확인
-        function hasSubmittedPhone(phone) {
-            if (!phone) return false;
-            const phoneRaw = phone.toString().trim().replaceAll('-', '').replaceAll(' ', '');
-            const savedPhone = localStorage.getItem('submitted_phone');
-            return savedPhone && savedPhone === phoneRaw;
-        }
-
         // 전화번호로 데이터 존재 여부 확인
         async function checkDataExists(phone) {
             console.log("=== 데이터 존재 여부 확인 시작 ===");
             console.log("전화번호:", phone);
             
-            // localStorage에 저장된 전화번호가 있으면 바로 true 반환
-            if (hasSubmittedPhone(phone)) {
-                console.log("localStorage에서 데이터 존재 확인됨");
-                console.log("=== 데이터 확인 완료 (localStorage) ===");
-                return true;
-            }
-            
-            console.log("localStorage에 없음, 서버에 확인 요청");
-            
-            // localStorage에 없으면 서버에 확인
             try {
                 const requestUrl = `${SCRIPT_URL}?phone=${encodeURIComponent(phone)}`;
                 console.log("요청 URL:", requestUrl);
@@ -536,12 +510,6 @@
                 const exists = data.submissions && data.submissions.length > 0;
                 console.log("데이터 존재 여부:", exists);
                 console.log("제출 내역 수:", data.submissions ? data.submissions.length : 0);
-                
-                // 서버에 데이터가 있으면 localStorage에도 저장
-                if (exists) {
-                    saveSubmittedPhone(phone);
-                    console.log("localStorage에 전화번호 저장 완료");
-                }
                 
                 console.log("=== 데이터 확인 완료 (서버) ===");
                 return exists;
@@ -606,10 +574,6 @@
                 const successMessage = exists ? '데이터가 수정되었습니다!' : '제출이 완료되었습니다!';
                 console.log("성공 메시지:", successMessage);
                 showMessage(successMessage, 'success');
-                
-                // 제출 완료 후 localStorage에 전화번호 저장
-                saveSubmittedPhone(formData.user_phone);
-                console.log("localStorage에 전화번호 저장 완료");
                 
                 console.log("=== 폼 제출 완료 (성공) ===");
                 
