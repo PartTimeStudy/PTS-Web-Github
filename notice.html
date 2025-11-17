@@ -78,16 +78,39 @@
                     // 주소 정보를 해당 필드에 넣는다.
                     const addressEl = document.getElementById('address');
                     const detailAddressEl = document.getElementById('detailAddress');
+                    const fullAddress = addr + extraAddr;
                     
-                    if (addressEl) addressEl.value = addr + extraAddr;
+                    if (addressEl) {
+                        addressEl.value = fullAddress;
+                        // localStorage에 주소 저장
+                        localStorage.setItem('userAddress', fullAddress);
+                    }
                     // 커서를 상세주소 필드로 이동한다.
                     if (detailAddressEl) detailAddressEl.focus();
                 }
             }).open();
         }
 
+        // 페이지 로드 시 저장된 주소 불러오기
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedAddress = localStorage.getItem('userAddress');
+            const savedDetailAddress = localStorage.getItem('userDetailAddress');
+            
+            if (savedAddress) {
+                document.getElementById('address').value = savedAddress;
+            }
+            if (savedDetailAddress) {
+                document.getElementById('detailAddress').value = savedDetailAddress;
+            }
+        });
+
         // 주소 입력 필드 클릭 시 주소 검색 팝업 열기
         document.getElementById('address').addEventListener('click', openAddressSearch);
+
+        // 상세주소 입력 시 localStorage에 저장
+        document.getElementById('detailAddress').addEventListener('input', (e) => {
+            localStorage.setItem('userDetailAddress', e.target.value);
+        });
 
         // 출금하기 버튼 클릭
         document.getElementById('withdrawalBtn').addEventListener('click', async () => {
@@ -129,8 +152,9 @@
                 // 주소 저장
                 await saveAddress(fullAddress);
 
-                // 주소를 localStorage에 저장 (출금 페이지에서 사용)
-                localStorage.setItem('userAddress', fullAddress);
+                // 주소를 localStorage에 저장 (출금 페이지에서 사용 및 다음 접속 시 자동 입력)
+                localStorage.setItem('userAddress', address);
+                localStorage.setItem('userDetailAddress', detailAddress);
 
                 // 출금 페이지로 이동
                 window.location.href = 'withdrawal.html';
