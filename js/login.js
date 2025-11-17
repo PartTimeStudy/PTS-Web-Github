@@ -53,7 +53,7 @@ async function verifyCode(phone, code) {
                 throw new Error('토큰을 받지 못했습니다.');
             }
             // TODO PhoneToken을 기반으로 AccessToken 발급해야함
-            throw new Error('토큰을 발급할 수 없습니다.');
+            throw new Error('아직 토큰을 발급할 수 없습니다.');
 
             // phoneToken을 저장 (기존 토큰 저장 함수 사용)
             saveToken(phoneToken);
