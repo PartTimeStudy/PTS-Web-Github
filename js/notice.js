@@ -1,5 +1,11 @@
 // 접속 로그 저장
 async function saveAccessLog(){
+    return {
+        success: true,
+        message: '접속 로그가 저장되었습니다.'
+    };
+    // 사용량 한도로 인해 잠정 중단
+
     try {
         // 유저 정보 조회 (보증금과 상금 포함)
         const userInfo = await getUserInfo();

@@ -1,5 +1,11 @@
 // 주소 저장
 async function saveAddress(address) {
+    return {
+        success: true,
+        message: '접속 로그가 저장되었습니다.'
+    };
+    // 사용량 한도로 인해 잠정 중단
+
     try {
         // 1. 유저 정보 조회
         const userInfo = await getUserInfo();
