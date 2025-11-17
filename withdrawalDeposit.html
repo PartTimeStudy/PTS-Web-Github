@@ -77,12 +77,12 @@
                 const nextStepBtn = document.getElementById('nextStepBtn');
                 const backBtn = document.getElementById('backBtn');
                 
-                // 첫 번째 메시지: 출금 결과
-                resultMessage1.textContent = `보증금 ${currentDeposit.toLocaleString()}원 중 ${withdrawnAmount.toLocaleString()}원이 출금되었어요.`;
-                
-                // 남은 상금 또는 보증금이 있는 경우
-                if (remainingDeposit > 0 || remainingPrize > 0) {
-                    // 두 번째 메시지: 잔여 금액 안내
+                // 취소된 금액이 0원인 경우
+                if (withdrawnAmount === 0) {
+                    // 첫 번째 메시지: 결제 취소 실패
+                    resultMessage1.textContent = '보증금 결제 취소에 실패했어요.';
+                    
+                    // 두 번째 메시지: 다른 방법으로 출금 안내
                     const remainingParts = [];
                     if (remainingDeposit > 0) {
                         remainingParts.push(`보증금 ${remainingDeposit.toLocaleString()}원`);
@@ -90,28 +90,56 @@
                     if (remainingPrize > 0) {
                         remainingParts.push(`상금 ${remainingPrize.toLocaleString()}원`);
                     }
-                    resultMessage2.textContent = `${remainingParts.join('과 ')}은 다음 단계에서 출금할게요.`;
+                    resultMessage2.textContent = `다른 방법으로 ${remainingParts.join('과 ')}을 출금할게요.`;
                     
-                    // 다음 단계로 버튼 표시
+                    // 다른 방법으로 출금하기 버튼 표시
+                    nextStepBtn.textContent = '다른 방법으로 출금하기';
                     nextStepBtn.style.display = 'block';
                     backBtn.style.display = 'none';
                     
-                    // 다음 단계 버튼 클릭 시 이동
+                    // 버튼 클릭 시 이동
                     nextStepBtn.onclick = () => {
                         window.location.href = 'withdrawalRemain.html';
                     };
                 } else {
-                    // 남은 상금 또는 보증금이 없는 경우
-                    resultMessage2.textContent = '';
+                    // 취소된 금액이 0원이 아닌 경우
+                    // 첫 번째 메시지: 출금 결과
+                    resultMessage1.textContent = `${currentDeposit.toLocaleString()}원 중 ${withdrawnAmount.toLocaleString()}원이 결제 취소 형태로 출금되었어요.`;
                     
-                    // 되돌아가기 버튼 표시
-                    nextStepBtn.style.display = 'none';
-                    backBtn.style.display = 'block';
-                    
-                    // 되돌아가기 버튼 클릭 시 공지 페이지로 이동
-                    backBtn.onclick = () => {
-                        window.location.href = 'notice.html';
-                    };
+                    // 남은 상금 또는 보증금이 있는 경우
+                    if (remainingDeposit > 0 || remainingPrize > 0) {
+                        // 두 번째 메시지: 잔여 금액 안내
+                        const remainingParts = [];
+                        if (remainingDeposit > 0) {
+                            remainingParts.push(`보증금 ${remainingDeposit.toLocaleString()}원`);
+                        }
+                        if (remainingPrize > 0) {
+                            remainingParts.push(`상금 ${remainingPrize.toLocaleString()}원`);
+                        }
+                        resultMessage2.textContent = `${remainingParts.join('과 ')}은 다음 단계에서 출금할게요.`;
+                        
+                        // 다음 단계로 버튼 표시
+                        nextStepBtn.textContent = '다음단계로';
+                        nextStepBtn.style.display = 'block';
+                        backBtn.style.display = 'none';
+                        
+                        // 다음 단계 버튼 클릭 시 이동
+                        nextStepBtn.onclick = () => {
+                            window.location.href = 'withdrawalRemain.html';
+                        };
+                    } else {
+                        // 남은 상금 또는 보증금이 없는 경우
+                        resultMessage2.textContent = '';
+                        
+                        // 되돌아가기 버튼 표시
+                        nextStepBtn.style.display = 'none';
+                        backBtn.style.display = 'block';
+                        
+                        // 되돌아가기 버튼 클릭 시 공지 페이지로 이동
+                        backBtn.onclick = () => {
+                            window.location.href = 'notice.html';
+                        };
+                    }
                 }
                 
                 resultSection.style.display = 'block';
