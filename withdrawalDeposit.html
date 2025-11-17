@@ -33,15 +33,7 @@
 
         // 페이지 로드 시 자동으로 보증금 출금 처리 시작
         document.addEventListener('DOMContentLoaded', async () => {
-            const address = localStorage.getItem('userAddress');
             const messageEl = document.getElementById('message');
-
-            // 주소 확인
-            if (!address) {
-                messageEl.className = 'message error show';
-                messageEl.textContent = '주소 정보가 없습니다. 이전 페이지로 돌아가주세요.';
-                return;
-            }
 
             try {
                 // 현재 보증금 조회
