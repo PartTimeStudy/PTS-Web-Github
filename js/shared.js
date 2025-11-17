@@ -2,9 +2,15 @@
 const APP_VERSION = '1.0.2';
 const BUILD_DATE = '2025-01-14';
 
-// API 기본 URL (실제 서버 URL로 변경 필요)
-// const API_BASE_URL = 'https://dev-api.partimestudy.com';
-const API_BASE_URL = 'http://studywork-macmini:8080';
+// API 기본 URL (파일 실행 vs 웹 URL 접속 구분)
+const API_BASE_URL = (() => {
+    // 파일로 실행할 때 (file://)
+    if (window.location.protocol === 'file:') {
+        return 'http://studywork-macmini:8080';
+    }
+    // 웹 URL로 접속할 때
+    return 'https://dev-api.partimestudy.com';
+})();
 
 // 공통 API 호출 함수
 async function apiCall(endpoint, method = 'GET', data = null, headers = {}) {
