@@ -46,24 +46,7 @@ async function verifyCode(phone, code) {
         });
 
         // API 응답 형식 확인
-        if (response.result === 'SUCCESS') {
-            const phoneToken = response.data?.phoneToken;
-            
-            if (!phoneToken) {
-                throw new Error('토큰을 받지 못했습니다.');
-            }
-            // TODO PhoneToken을 기반으로 AccessToken 발급해야함
-            throw new Error('아직 토큰을 발급할 수 없습니다.');
-
-            // phoneToken을 저장 (기존 토큰 저장 함수 사용)
-            saveToken(phoneToken);
-
-            return {
-                success: true,
-                token: phoneToken,
-                message: '인증이 완료되었습니다.'
-            };
-        } else if (response.result === 'ERROR') {
+        if (response.result === 'ERROR') {
             const errorCode = response.error?.code;
             const errorMessage = response.error?.message || '인증번호 확인에 실패했습니다.';
 
@@ -75,9 +58,29 @@ async function verifyCode(phone, code) {
             } else {
                 throw new Error(errorMessage);
             }
-        } else {
+        }
+        else if (response.result !== 'SUCCESS') {
             throw new Error('알 수 없는 응답 형식입니다.');
         }
+
+        const phoneToken = response.data?.phoneToken;
+        
+        if (!phoneToken) {
+            throw new Error('토큰을 받지 못했습니다.');
+        }
+
+        const loginResponse = await apiCall('/api/v1/auth/login/phone', 'POST', {
+            phoneToken: phoneToken
+        });
+
+        // phoneToken을 저장 (기존 토큰 저장 함수 사용)
+        saveToken(loginResponse.data?.accessToken);
+
+        return {
+            success: true,
+            token: loginResponse.data?.accessToken,
+            message: '인증이 완료되었습니다.'
+        };
     } catch (error) {
         // HTTP 에러 처리
         if (error.message.includes('HTTP error')) {
