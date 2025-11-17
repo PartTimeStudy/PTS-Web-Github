@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>공지사항</h1>
+
+        <div id="noticeContent" style="color: #e0e0e0; line-height: 1.8; margin-bottom: 30px; white-space: pre-wrap;">
+            공지사항 내용을 여기에 작성하세요.
+        </div>
+
+        <div class="form-group">
+            <label for="address">주소</label>
+            <input type="text" id="address" name="address" placeholder="주소를 입력해주세요">
+        </div>
+
+        <button type="button" class="btn" id="withdrawalBtn">출금하기</button>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <div class="version-info" id="versionInfo"></div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/notice.js"></script>
+    <script>
+        // 버전 정보 표시
+        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+
+        // 출금하기 버튼 클릭
+        document.getElementById('withdrawalBtn').addEventListener('click', async () => {
+            const addressInput = document.getElementById('address');
+            const address = addressInput.value.trim();
+            const messageEl = document.getElementById('message');
+            const withdrawalBtn = document.getElementById('withdrawalBtn');
+
+            // 메시지 초기화
+            messageEl.className = 'message';
+            messageEl.textContent = '';
+
+            // 토큰 확인
+            const token = checkAuth();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (!address) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = '주소를 입력해주세요.';
+                return;
+            }
+
+            try {
+                // 버튼 비활성화
+                withdrawalBtn.disabled = true;
+                withdrawalBtn.textContent = '처리 중...';
+
+                messageEl.className = 'message loading show';
+                messageEl.textContent = '주소 저장 중...';
+
+                // 주소 저장
+                await saveAddress(address);
+
+                // 주소를 localStorage에 저장 (출금 페이지에서 사용)
+                localStorage.setItem('userAddress', address);
+
+                // 출금 페이지로 이동
+                window.location.href = 'withdrawal.html';
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '주소 저장에 실패했습니다.';
+                withdrawalBtn.disabled = false;
+                withdrawalBtn.textContent = '출금하기';
+            }
+        });
+
+        // Enter 키로 출금하기
+        document.getElementById('address').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('withdrawalBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
+

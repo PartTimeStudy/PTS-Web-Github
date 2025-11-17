@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출금</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>출금</h1>
+
+        <div id="currentAmountSection" style="margin-top: 20px; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #404040;">
+            <div style="color: #e0e0e0; line-height: 1.8;">
+                <div id="userMessage" style="margin-bottom: 20px; font-size: 16px;"></div>
+                <div style="padding: 15px; background: #2d2d2d; border-radius: 6px;">
+                    <div id="currentDeposit" style="margin-bottom: 10px;"></div>
+                    <div id="currentPrize"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <button type="button" class="btn" id="nextBtn" style="display: none; margin-top: 20px;">보증금부터 출금하기</button>
+        <button type="button" class="btn" id="backBtn" style="display: none; margin-top: 20px; background: transparent; border: 1px solid #404040;">돌아가기</button>
+    </div>
+
+    <div class="version-info" id="versionInfo"></div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/withdrawal.js"></script>
+    <script>
+        // 버전 정보 표시
+        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+
+        // 페이지 로드 시 현재 금액 조회 및 표시
+        document.addEventListener('DOMContentLoaded', async () => {
+            const messageEl = document.getElementById('message');
+            const userMessageEl = document.getElementById('userMessage');
+            const currentDepositEl = document.getElementById('currentDeposit');
+            const currentPrizeEl = document.getElementById('currentPrize');
+
+            try {
+                // 현재 금액 및 유저 정보 조회
+                messageEl.className = 'message loading show';
+                messageEl.textContent = '금액 정보 조회 중...';
+
+                const [currentAmount, userInfo] = await Promise.all([
+                    getCurrentAmount(),
+                    getUserInfo()
+                ]);
+
+                // 유저 안내 메시지 표시
+                userMessageEl.textContent = `${userInfo.name}님께서 현재 보유하고 계신 보증금과 상금은 아래와 같습니다.`;
+
+                // 현재 금액 표시
+                if (currentAmount.deposit > 0) {
+                    currentDepositEl.textContent = `보증금: ${currentAmount.deposit.toLocaleString()}원`;
+                } else {
+                    currentDepositEl.textContent = '보증금: 0원';
+                }
+
+                if (currentAmount.prize > 0) {
+                    currentPrizeEl.textContent = `상금: ${currentAmount.prize.toLocaleString()}원`;
+                } else {
+                    currentPrizeEl.textContent = '상금: 0원';
+                }
+
+                // 금액 표시 완료
+                messageEl.className = 'message';
+                messageEl.textContent = '';
+
+                // 보증금 또는 상금이 없는 경우
+                if (currentAmount.deposit === 0 && currentAmount.prize === 0) {
+                    // 돌아가기 버튼 표시
+                    const backBtn = document.getElementById('backBtn');
+                    backBtn.style.display = 'block';
+                    backBtn.addEventListener('click', () => {
+                        window.location.href = 'notice.html';
+                    });
+                    return;
+                }
+
+                // 다음 버튼 표시
+                const nextBtn = document.getElementById('nextBtn');
+                nextBtn.style.display = 'block';
+
+                // 다음 버튼 클릭 시 페이지 이동
+                nextBtn.addEventListener('click', () => {
+                    if (currentAmount.deposit > 0) {
+                        window.location.href = 'withdrawalDeposit.html';
+                    } else if (currentAmount.prize > 0) {
+                        window.location.href = 'withdrawalRemain.html';
+                    }
+                });
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '처리 중 오류가 발생했습니다.';
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>로그인</h1>
+
+        <div id="phoneStep">
+            <div class="form-group">
+                <label for="phone">휴대폰 번호</label>
+                <input type="tel" id="phone" name="phone" placeholder="010-1234-5678" required>
+            </div>
+            <button type="button" class="btn" id="sendCodeBtn">인증번호 발송</button>
+        </div>
+
+        <div id="codeStep" style="display: none;">
+            <div class="form-group">
+                <label for="code">인증번호</label>
+                <input type="text" id="code" name="code" placeholder="인증번호 6자리" maxlength="6" required>
+            </div>
+            <button type="button" class="btn" id="verifyCodeBtn">인증번호 확인</button>
+            <button type="button" class="btn" id="backToPhoneBtn" style="margin-top: 10px; background: transparent; border: 1px solid #404040;">다시 입력</button>
+        </div>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <div class="version-info" id="versionInfo"></div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/login.js"></script>
+    <script>
+        // 버전 정보 표시
+        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+
+        let currentPhone = '';
+
+        // 인증번호 발송 버튼 클릭
+        document.getElementById('sendCodeBtn').addEventListener('click', async () => {
+            const phoneInput = document.getElementById('phone');
+            const phone = phoneInput.value.trim();
+            const messageEl = document.getElementById('message');
+
+            // 메시지 초기화
+            messageEl.className = 'message';
+            messageEl.textContent = '';
+
+            if (!phone) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = '전화번호를 입력해주세요.';
+                return;
+            }
+
+            try {
+                // 버튼 비활성화
+                const sendBtn = document.getElementById('sendCodeBtn');
+                sendBtn.disabled = true;
+                sendBtn.textContent = '발송 중...';
+
+                messageEl.className = 'message loading show';
+                messageEl.textContent = '인증번호를 발송하고 있습니다...';
+
+                await sendVerificationCode(phone);
+                
+                currentPhone = phone;
+                
+                // 전화번호 입력 단계 숨기고 인증번호 입력 단계 표시
+                document.getElementById('phoneStep').style.display = 'none';
+                document.getElementById('codeStep').style.display = 'block';
+                
+                messageEl.className = 'message success show';
+                messageEl.textContent = '인증번호가 발송되었습니다.';
+
+                // 인증번호 입력 필드에 포커스
+                document.getElementById('code').focus();
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '인증번호 발송에 실패했습니다.';
+            } finally {
+                const sendBtn = document.getElementById('sendCodeBtn');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증번호 발송';
+            }
+        });
+
+        // 인증번호 확인 버튼 클릭
+        document.getElementById('verifyCodeBtn').addEventListener('click', async () => {
+            const codeInput = document.getElementById('code');
+            const code = codeInput.value.trim();
+            const messageEl = document.getElementById('message');
+
+            // 메시지 초기화
+            messageEl.className = 'message';
+            messageEl.textContent = '';
+
+            if (!code || code.length < 4) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = '인증번호를 입력해주세요.';
+                return;
+            }
+
+            try {
+                // 버튼 비활성화
+                const verifyBtn = document.getElementById('verifyCodeBtn');
+                verifyBtn.disabled = true;
+                verifyBtn.textContent = '확인 중...';
+
+                messageEl.className = 'message loading show';
+                messageEl.textContent = '인증번호를 확인하고 있습니다...';
+
+                await verifyCode(currentPhone, code);
+                
+                messageEl.className = 'message success show';
+                messageEl.textContent = '인증이 완료되었습니다.';
+
+                // 잠시 후 공지문 페이지로 이동
+                setTimeout(() => {
+                    window.location.href = 'notice.html';
+                }, 1000);
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '인증번호 확인에 실패했습니다.';
+            } finally {
+                const verifyBtn = document.getElementById('verifyCodeBtn');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = '인증번호 확인';
+            }
+        });
+
+        // 다시 입력 버튼 클릭
+        document.getElementById('backToPhoneBtn').addEventListener('click', () => {
+            document.getElementById('codeStep').style.display = 'none';
+            document.getElementById('phoneStep').style.display = 'block';
+            document.getElementById('code').value = '';
+            document.getElementById('message').className = 'message';
+            document.getElementById('message').textContent = '';
+            currentPhone = '';
+        });
+
+        // 전화번호 입력 시 자동 포맷팅
+        document.getElementById('phone').addEventListener('input', (e) => {
+            const formatted = formatPhoneNumber(e.target.value);
+            if (formatted !== e.target.value) {
+                e.target.value = formatted;
+            }
+        });
+
+        // Enter 키로 인증번호 발송
+        document.getElementById('phone').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('sendCodeBtn').click();
+            }
+        });
+
+        // Enter 키로 인증번호 확인
+        document.getElementById('code').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('verifyCodeBtn').click();
+            }
+        });
+    </script>
+</body>
+</html>
+

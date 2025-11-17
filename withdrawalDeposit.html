@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보증금 출금</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>보증금 출금</h1>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <div class="version-info" id="versionInfo"></div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/withdrawal.js"></script>
+    <script src="js/withdrawalDeposit.js"></script>
+    <script>
+        // 버전 정보 표시
+        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+
+        // 페이지 로드 시 자동으로 보증금 출금 처리 시작
+        document.addEventListener('DOMContentLoaded', async () => {
+            const address = localStorage.getItem('userAddress');
+            const messageEl = document.getElementById('message');
+
+            // 주소 확인
+            if (!address) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = '주소 정보가 없습니다. 이전 페이지로 돌아가주세요.';
+                return;
+            }
+
+            try {
+                // 현재 보증금 조회
+                const currentAmount = await getCurrentAmount();
+                const currentDeposit = currentAmount.deposit || 0;
+
+                if (currentDeposit === 0) {
+                    // 보증금이 없으면 잔여 금액 출금 페이지로 이동
+                    window.location.href = 'withdrawalRemain.html';
+                    return;
+                }
+
+                // 보증금 출금 진행 중 표시
+                messageEl.className = 'message loading show';
+                messageEl.textContent = `보증금 ${currentDeposit.toLocaleString()}원 출금 중...`;
+
+                // 보증금 출금 처리
+                const withdrawalResult = await processDepositWithdrawal();
+                const withdrawnAmount = withdrawalResult.withdrawnAmount || withdrawalResult.amount || currentDeposit;
+
+                // 출금 후 금액 재조회
+                const remainingInfo = await getCurrentAmount();
+
+                // 전체 출금 성공 (잔여 금액이 0원)
+                if (remainingInfo.deposit === 0 && remainingInfo.prize === 0) {
+                    messageEl.className = 'message';
+                    messageEl.textContent = '';
+                    alert('보증금 출금이 완료되었습니다.');
+                    window.location.href = 'notice.html';
+                    return;
+                }
+
+                // 일부 출금 성공 (잔여 금액이 0원 초과) - withdrawalRemain 페이지로 이동
+                if (remainingInfo.deposit > 0 || remainingInfo.prize > 0) {
+                    window.location.href = `withdrawalRemain.html?currentDeposit=${currentDeposit}&withdrawnAmount=${withdrawnAmount}`;
+                    return;
+                }
+
+                // 보증금 출금 완료 후 상금이 있으면 잔여 금액 출금 페이지로 이동
+                if (remainingInfo.prize > 0) {
+                    window.location.href = 'withdrawalRemain.html';
+                } else {
+                    window.location.href = 'notice.html';
+                }
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '처리 중 오류가 발생했습니다.';
+            }
+        });
+    </script>
+</body>
+</html>
+

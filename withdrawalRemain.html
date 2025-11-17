@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>잔여 금액 출금</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>잔여 금액 출금</h1>
+
+        <div id="message" class="message"></div>
+
+        <div id="withdrawalInfoSection" style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #404040;">
+            <h2 style="color: #e0e0e0; font-size: 20px; margin-bottom: 15px;">출금 정보</h2>
+            <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 20px;">
+                <div id="withdrawalMessage" style="margin-bottom: 15px;"></div>
+                <div style="padding: 15px; background: #2d2d2d; border-radius: 6px; font-size: 14px;">
+                    <div style="margin-bottom: 8px;"><strong>유저명:</strong> <span id="userName"></span></div>
+                    <div style="margin-bottom: 8px;"><strong>전화번호:</strong> <span id="userPhone"></span></div>
+                    <div style="margin-bottom: 8px;"><strong>잔여 보증금:</strong> <span id="remainingDeposit"></span></div>
+                    <div style="margin-bottom: 8px;"><strong>잔여 상금:</strong> <span id="remainingPrize"></span></div>
+                    <div><strong>주소:</strong> <span id="address"></span></div>
+                </div>
+            </div>
+            <button type="button" class="btn" id="confirmBtn">확인</button>
+        </div>
+    </div>
+
+    <div class="version-info" id="versionInfo"></div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/withdrawal.js"></script>
+    <script src="js/withdrawalRemain.js"></script>
+    <script>
+        // 버전 정보 표시
+        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+
+        // 페이지 로드 시 정보 표시 및 전송 준비
+        document.addEventListener('DOMContentLoaded', async () => {
+            const messageEl = document.getElementById('message');
+            const address = localStorage.getItem('userAddress');
+
+            // URL 파라미터에서 정보 가져오기
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentDeposit = parseInt(urlParams.get('currentDeposit') || '0');
+            const withdrawnAmount = parseInt(urlParams.get('withdrawnAmount') || '0');
+
+            try {
+                // 유저 정보 조회
+                messageEl.className = 'message loading show';
+                messageEl.textContent = '정보 조회 중...';
+
+                const userInfo = await getUserInfo();
+                const remainingInfo = await getCurrentAmount();
+
+                // 정보 표시
+                let withdrawalMessage = '';
+                if (currentDeposit > 0 && withdrawnAmount > 0) {
+                    withdrawalMessage = `${currentDeposit.toLocaleString()}원 중 ${withdrawnAmount.toLocaleString()}원이 출금되었어요.<br>아래 정보로 나머지 보증금과 상금 출금을 요청할게요.`;
+                } else {
+                    withdrawalMessage = '아래 정보로 보증금과 상금 출금을 요청할게요.';
+                }
+                document.getElementById('withdrawalMessage').innerHTML = withdrawalMessage;
+                document.getElementById('userName').textContent = userInfo.name || '-';
+                document.getElementById('userPhone').textContent = userInfo.phone || '-';
+                document.getElementById('remainingDeposit').textContent = remainingInfo.deposit > 0 ? `${remainingInfo.deposit.toLocaleString()}원` : '0원';
+                document.getElementById('remainingPrize').textContent = remainingInfo.prize > 0 ? `${remainingInfo.prize.toLocaleString()}원` : '0원';
+                document.getElementById('address').textContent = address || '-';
+
+                messageEl.className = 'message';
+                messageEl.textContent = '';
+
+                // 확인 버튼 클릭 시 정보 전송
+                document.getElementById('confirmBtn').addEventListener('click', async () => {
+                    try {
+                        const confirmBtn = document.getElementById('confirmBtn');
+                        confirmBtn.disabled = true;
+                        confirmBtn.textContent = '전송 중...';
+
+                        messageEl.className = 'message loading show';
+                        messageEl.textContent = '정보 전송 중...';
+
+                        await submitFinalInfo({
+                            name: userInfo.name,
+                            phone: userInfo.phone,
+                            deposit: remainingInfo.deposit,
+                            prize: remainingInfo.prize,
+                            address: address
+                        });
+
+                        messageEl.className = 'message success show';
+                        messageEl.textContent = '정보가 전송되었습니다.';
+
+                        setTimeout(() => {
+                            window.location.href = 'notice.html';
+                        }, 1500);
+                    } catch (error) {
+                        messageEl.className = 'message error show';
+                        messageEl.textContent = error.message || '정보 전송에 실패했습니다.';
+                        document.getElementById('confirmBtn').disabled = false;
+                        document.getElementById('confirmBtn').textContent = '확인';
+                    }
+                });
+            } catch (error) {
+                messageEl.className = 'message error show';
+                messageEl.textContent = error.message || '처리 중 오류가 발생했습니다.';
+            }
+        });
+    </script>
+</body>
+</html>
+
