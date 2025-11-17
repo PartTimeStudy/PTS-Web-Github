@@ -7,10 +7,15 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div style="text-align: center; padding: 20px;">
+    <div style="text-align: center; padding: 0px;">
         <div id="imageContainer" style="position: relative; display: inline-block; width: 100%; max-width: 600px;">
-            <img id="noticeImage" src="assets/notice.png" alt="공지사항" style="width: 100%; height: auto; display: none;">
-            <div id="redBox" style="position: absolute; bottom: 0; left: 0; right: 0; background-color: transparent; cursor: pointer;"></div>
+            <!-- <img id="noticeImage" src="assets/notice.png" alt="공지사항" style="width: 100%; height: auto;"> -->
+            <div id="noticeImage" style="width: 100%; height: auto; background-color: #fff;"> 
+                <div style="width: 100%; height: 300px;"> </div>
+                <h1 style="width: 100%; text-align: center; color: #000;">공지사항 이미지</h1> 
+                <div style="width: 100%; height: 300px;"> </div>
+            </div>
+            <div id="redBox" style="position: absolute; bottom: 0; left: 0; right: 0; background-color: red; opacity: 0.5; cursor: pointer;"></div>
         </div>
     </div>
 
@@ -35,21 +40,18 @@
                 }
             }
 
-            // 이미지 로드 후 빨간색 박스 높이 설정 (너비의 25%)
-            const noticeImage = document.getElementById('noticeImage');
+            // 컨테이너 너비 기준으로 빨간색 박스 높이 설정 (너비의 25%)
+            const imageContainer = document.getElementById('imageContainer');
             const redBox = document.getElementById('redBox');
             
             function setRedBoxHeight() {
-                const imageWidth = noticeImage.offsetWidth;
-                const boxHeight = imageWidth * 0.25; // 25% (600px 기준 150px)
+                const containerWidth = imageContainer.offsetWidth;
+                const boxHeight = containerWidth * 0.25; // 25% (600px 기준 150px)
                 redBox.style.height = boxHeight + 'px';
             }
 
-            if (noticeImage.complete) {
-                setRedBoxHeight();
-            } else {
-                noticeImage.addEventListener('load', setRedBoxHeight);
-            }
+            // 초기 높이 설정
+            setRedBoxHeight();
 
             // 윈도우 리사이즈 시에도 높이 재계산
             window.addEventListener('resize', setRedBoxHeight);
