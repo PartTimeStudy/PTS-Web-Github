@@ -1,5 +1,5 @@
 // 버전 정보
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.1';
 const BUILD_DATE = '2025-01-14';
 
 // API 기본 URL (실제 서버 URL로 변경 필요)

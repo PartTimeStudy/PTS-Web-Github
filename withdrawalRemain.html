@@ -10,8 +10,6 @@
     <div class="container">
         <h1>잔여 금액 출금</h1>
 
-        <div id="message" class="message"></div>
-
         <div id="withdrawalInfoSection" style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #404040;">
             <h2 style="color: #e0e0e0; font-size: 20px; margin-bottom: 15px;">출금 정보</h2>
             <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 20px;">
@@ -24,6 +22,7 @@
                     <div><strong>주소:</strong> <span id="address"></span></div>
                 </div>
             </div>
+            <div id="message" class="message" style="margin-bottom: 15px;"></div>
             <button type="button" class="btn" id="confirmBtn">확인</button>
         </div>
     </div>
@@ -40,7 +39,10 @@
         // 페이지 로드 시 정보 표시 및 전송 준비
         document.addEventListener('DOMContentLoaded', async () => {
             const messageEl = document.getElementById('message');
-            const address = localStorage.getItem('userAddress');
+            // 주소와 상세주소를 합쳐서 사용
+            const savedAddress = localStorage.getItem('userAddress') || '';
+            const savedDetailAddress = localStorage.getItem('userDetailAddress') || '';
+            const address = `${savedAddress} ${savedDetailAddress}`.trim();
 
             try {
                 // 유저 정보 및 현재 금액 조회

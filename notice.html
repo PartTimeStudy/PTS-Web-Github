@@ -82,7 +82,7 @@
                     
                     if (addressEl) {
                         addressEl.value = fullAddress;
-                        // localStorage에 주소 저장
+                        // localStorage에 주소만 저장 (상세주소는 별도로 저장)
                         localStorage.setItem('userAddress', fullAddress);
                     }
                     // 커서를 상세주소 필드로 이동한다.
