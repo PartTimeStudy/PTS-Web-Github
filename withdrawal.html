@@ -42,27 +42,24 @@
             const currentPrizeEl = document.getElementById('currentPrize');
 
             try {
-                // 현재 금액 및 유저 정보 조회
+                // 유저 정보 조회
                 messageEl.className = 'message loading show';
                 messageEl.textContent = '금액 정보 조회 중...';
 
-                const [currentAmount, userInfo] = await Promise.all([
-                    getCurrentAmount(),
-                    getUserInfo()
-                ]);
+                const userInfo = await getUserInfo();
 
                 // 유저 안내 메시지 표시
                 userMessageEl.textContent = `${userInfo.name}님께서 현재 보유하고 계신 보증금과 상금은 아래와 같습니다.`;
 
                 // 현재 금액 표시
-                if (currentAmount.deposit > 0) {
-                    currentDepositEl.textContent = `보증금: ${currentAmount.deposit.toLocaleString()}원`;
+                if (userInfo.remainDeposit > 0) {
+                    currentDepositEl.textContent = `보증금: ${userInfo.remainDeposit.toLocaleString()}원`;
                 } else {
                     currentDepositEl.textContent = '보증금: 0원';
                 }
 
-                if (currentAmount.prize > 0) {
-                    currentPrizeEl.textContent = `상금: ${currentAmount.prize.toLocaleString()}원`;
+                if (userInfo.remainPrize > 0) {
+                    currentPrizeEl.textContent = `상금: ${userInfo.remainPrize.toLocaleString()}원`;
                 } else {
                     currentPrizeEl.textContent = '상금: 0원';
                 }
@@ -72,7 +69,7 @@
                 messageEl.textContent = '';
 
                 // 보증금 또는 상금이 없는 경우
-                if (currentAmount.deposit === 0 && currentAmount.prize === 0) {
+                if (userInfo.remainDeposit === 0 && userInfo.remainPrize === 0) {
                     // 돌아가기 버튼 표시
                     const backBtn = document.getElementById('backBtn');
                     backBtn.style.display = 'block';
@@ -88,9 +85,9 @@
 
                 // 다음 버튼 클릭 시 페이지 이동
                 nextBtn.addEventListener('click', () => {
-                    if (currentAmount.deposit > 0) {
+                    if (userInfo.remainDeposit > 0) {
                         window.location.href = 'withdrawalDeposit.html';
-                    } else if (currentAmount.prize > 0) {
+                    } else if (userInfo.remainPrize > 0) {
                         window.location.href = 'withdrawalRemain.html';
                     }
                 });

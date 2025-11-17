@@ -45,8 +45,8 @@
 
             try {
                 // 현재 보증금 조회
-                const currentAmount = await getCurrentAmount();
-                const currentDeposit = currentAmount.deposit || 0;
+                const userInfo = await getUserInfo();
+                const currentDeposit = userInfo.remainDeposit || 0;
 
                 if (currentDeposit === 0) {
                     // 보증금이 없으면 잔여 금액 출금 페이지로 이동
@@ -62,9 +62,9 @@
                 await processDepositWithdrawal();
 
                 // 출금 후 금액 재조회
-                const remainingInfo = await getCurrentAmount();
-                const remainingDeposit = remainingInfo.deposit || 0;
-                const remainingPrize = remainingInfo.prize || 0;
+                const remainingInfo = await getUserInfo();
+                const remainingDeposit = remainingInfo.remainDeposit || 0;
+                const remainingPrize = remainingInfo.remainPrize || 0;
                 const withdrawnAmount = currentDeposit - remainingDeposit;
 
                 // 출금 결과 메시지 표시

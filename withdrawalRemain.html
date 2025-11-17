@@ -45,20 +45,19 @@
             const address = `${savedAddress} ${savedDetailAddress}`.trim();
 
             try {
-                // 유저 정보 및 현재 금액 조회
+                // 유저 정보 조회
                 messageEl.className = 'message loading show';
                 messageEl.textContent = '정보 조회 중...';
 
                 const userInfo = await getUserInfo();
-                const remainingInfo = await getCurrentAmount();
 
                 // 정보 표시
                 const withdrawalMessage = '아래 정보로 보증금과 상금 출금을 요청할게요.';
                 document.getElementById('withdrawalMessage').innerHTML = withdrawalMessage;
                 document.getElementById('userName').textContent = userInfo.name || '-';
                 document.getElementById('userPhone').textContent = userInfo.phone || '-';
-                document.getElementById('remainingDeposit').textContent = remainingInfo.deposit > 0 ? `${remainingInfo.deposit.toLocaleString()}원` : '0원';
-                document.getElementById('remainingPrize').textContent = remainingInfo.prize > 0 ? `${remainingInfo.prize.toLocaleString()}원` : '0원';
+                document.getElementById('remainingDeposit').textContent = userInfo.remainDeposit > 0 ? `${userInfo.remainDeposit.toLocaleString()}원` : '0원';
+                document.getElementById('remainingPrize').textContent = userInfo.remainPrize > 0 ? `${userInfo.remainPrize.toLocaleString()}원` : '0원';
                 document.getElementById('address').textContent = address || '-';
 
                 messageEl.className = 'message';
@@ -77,8 +76,8 @@
                         await submitFinalInfo({
                             name: userInfo.name,
                             phone: userInfo.phone,
-                            deposit: remainingInfo.deposit,
-                            prize: remainingInfo.prize,
+                            deposit: userInfo.remainDeposit,
+                            prize: userInfo.remainPrize,
                             address: address
                         });
 
