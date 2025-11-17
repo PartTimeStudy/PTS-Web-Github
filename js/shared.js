@@ -3,7 +3,8 @@ const APP_VERSION = '1.0.2';
 const BUILD_DATE = '2025-01-14';
 
 // API 기본 URL (실제 서버 URL로 변경 필요)
-const API_BASE_URL = 'https://dev-api.partimestudy.com';
+// const API_BASE_URL = 'https://dev-api.partimestudy.com';
+const API_BASE_URL = 'http://studywork-macmini:8080';
 
 // 공통 API 호출 함수
 async function apiCall(endpoint, method = 'GET', data = null, headers = {}) {

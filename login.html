@@ -21,7 +21,7 @@
         <div id="codeStep" style="display: none;">
             <div class="form-group">
                 <label for="code">인증번호</label>
-                <input type="text" id="code" name="code" placeholder="인증번호 6자리" maxlength="6" required>
+                <input type="text" id="code" name="code" placeholder="인증번호를 입력해주세요" required>
             </div>
             <button type="button" class="btn" id="verifyCodeBtn">인증번호 확인</button>
             <button type="button" class="btn" id="backToPhoneBtn" style="margin-top: 10px; background: transparent; border: 1px solid #404040;">다시 입력</button>
@@ -78,10 +78,16 @@
 
                 // 인증번호 입력 필드에 포커스
                 document.getElementById('code').focus();
+                
+                // 성공 시 버튼 활성화 (페이지 전환이 없으므로)
+                const sendBtn = document.getElementById('sendCodeBtn');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증번호 발송';
             } catch (error) {
                 messageEl.className = 'message error show';
                 messageEl.textContent = error.message || '인증번호 발송에 실패했습니다.';
-            } finally {
+                
+                // 에러 시 버튼 활성화
                 const sendBtn = document.getElementById('sendCodeBtn');
                 sendBtn.disabled = false;
                 sendBtn.textContent = '인증번호 발송';
@@ -98,7 +104,7 @@
             messageEl.className = 'message';
             messageEl.textContent = '';
 
-            if (!code || code.length < 4) {
+            if (!code || code.trim().length === 0) {
                 messageEl.className = 'message error show';
                 messageEl.textContent = '인증번호를 입력해주세요.';
                 return;
@@ -117,15 +123,13 @@
                 
                 messageEl.className = 'message success show';
                 messageEl.textContent = '인증이 완료되었습니다.';
+                window.location.href = 'notice.html';
 
-                // 잠시 후 공지문 페이지로 이동
-                setTimeout(() => {
-                    window.location.href = 'notice.html';
-                }, 1000);
             } catch (error) {
                 messageEl.className = 'message error show';
                 messageEl.textContent = error.message || '인증번호 확인에 실패했습니다.';
-            } finally {
+                
+                // 에러 시 버튼 활성화
                 const verifyBtn = document.getElementById('verifyCodeBtn');
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = '인증번호 확인';
