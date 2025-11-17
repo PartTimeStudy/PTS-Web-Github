@@ -50,8 +50,7 @@
                 messageEl.textContent = `보증금 ${currentDeposit.toLocaleString()}원 출금 중...`;
 
                 // 보증금 출금 처리
-                const withdrawalResult = await processDepositWithdrawal();
-                const withdrawnAmount = withdrawalResult.withdrawnAmount || withdrawalResult.amount || currentDeposit;
+                await processDepositWithdrawal();
 
                 // 출금 후 금액 재조회
                 const remainingInfo = await getCurrentAmount();
@@ -67,7 +66,7 @@
 
                 // 일부 출금 성공 (잔여 금액이 0원 초과) - withdrawalRemain 페이지로 이동
                 if (remainingInfo.deposit > 0 || remainingInfo.prize > 0) {
-                    window.location.href = `withdrawalRemain.html?currentDeposit=${currentDeposit}&withdrawnAmount=${withdrawnAmount}`;
+                    window.location.href = 'withdrawalRemain.html';
                     return;
                 }
 

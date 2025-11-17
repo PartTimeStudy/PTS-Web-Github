@@ -42,13 +42,8 @@
             const messageEl = document.getElementById('message');
             const address = localStorage.getItem('userAddress');
 
-            // URL 파라미터에서 정보 가져오기
-            const urlParams = new URLSearchParams(window.location.search);
-            const currentDeposit = parseInt(urlParams.get('currentDeposit') || '0');
-            const withdrawnAmount = parseInt(urlParams.get('withdrawnAmount') || '0');
-
             try {
-                // 유저 정보 조회
+                // 유저 정보 및 현재 금액 조회
                 messageEl.className = 'message loading show';
                 messageEl.textContent = '정보 조회 중...';
 
@@ -56,12 +51,7 @@
                 const remainingInfo = await getCurrentAmount();
 
                 // 정보 표시
-                let withdrawalMessage = '';
-                if (currentDeposit > 0 && withdrawnAmount > 0) {
-                    withdrawalMessage = `${currentDeposit.toLocaleString()}원 중 ${withdrawnAmount.toLocaleString()}원이 출금되었어요.<br>아래 정보로 나머지 보증금과 상금 출금을 요청할게요.`;
-                } else {
-                    withdrawalMessage = '아래 정보로 보증금과 상금 출금을 요청할게요.';
-                }
+                const withdrawalMessage = '아래 정보로 보증금과 상금 출금을 요청할게요.';
                 document.getElementById('withdrawalMessage').innerHTML = withdrawalMessage;
                 document.getElementById('userName').textContent = userInfo.name || '-';
                 document.getElementById('userPhone').textContent = userInfo.phone || '-';
