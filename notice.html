@@ -44,6 +44,11 @@
             return /android/i.test(userAgent) && /wv|WebView/i.test(userAgent);
         }
 
+        // 로컬 파일로 열렸는지 확인
+        function isLocalFile() {
+            return window.location.protocol === 'file:';
+        }
+
         // 주소 검색 함수
         function openAddressSearch() {
             if (typeof daum === 'undefined' || !daum.Postcode) {
@@ -98,16 +103,45 @@
         }
 
         // 페이지 로드 시 저장된 주소 불러오기 및 안드로이드 웹뷰 처리
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 접속 로그 저장 (인증된 경우에만)
+            const token = checkAuth();
+            if (token) {
+                try {
+                    await saveAccessLog();
+                } catch (error) {
+                    // 접속 로그 저장 실패는 치명적이지 않으므로 에러 무시
+                    console.error('접속 로그 저장 실패:', error);
+                }
+            }
+
             const savedAddress = localStorage.getItem('userAddress');
             const savedDetailAddress = localStorage.getItem('userDetailAddress');
             const addressInput = document.getElementById('address');
+            const detailAddressInput = document.getElementById('detailAddress');
             
-            if (savedAddress) {
-                addressInput.value = savedAddress;
-            }
-            if (savedDetailAddress) {
-                document.getElementById('detailAddress').value = savedDetailAddress;
+            // 로컬 파일로 열린 경우 자동으로 테스트 값 입력
+            if (isLocalFile()) {
+                if (!savedAddress) {
+                    addressInput.value = '서울특별시 강남구 테헤란로 123';
+                    localStorage.setItem('userAddress', addressInput.value);
+                } else {
+                    addressInput.value = savedAddress;
+                }
+                if (!savedDetailAddress) {
+                    detailAddressInput.value = '456동 789호';
+                    localStorage.setItem('userDetailAddress', detailAddressInput.value);
+                } else {
+                    detailAddressInput.value = savedDetailAddress;
+                }
+            } else {
+                // 로컬 파일이 아닌 경우 저장된 값 불러오기
+                if (savedAddress) {
+                    addressInput.value = savedAddress;
+                }
+                if (savedDetailAddress) {
+                    detailAddressInput.value = savedDetailAddress;
+                }
             }
 
             // 안드로이드 웹뷰인 경우 주소 입력 필드를 일반 텍스트 입력으로 변경
