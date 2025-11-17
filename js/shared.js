@@ -3,7 +3,7 @@ const APP_VERSION = '1.0.1';
 const BUILD_DATE = '2025-01-14';
 
 // API 기본 URL (실제 서버 URL로 변경 필요)
-const API_BASE_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+const API_BASE_URL = 'https://dev-api.partimestudy.com';
 
 // 공통 API 호출 함수
 async function apiCall(endpoint, method = 'GET', data = null, headers = {}) {
@@ -29,11 +29,25 @@ async function apiCall(endpoint, method = 'GET', data = null, headers = {}) {
 
         const response = await fetch(url, options);
         
+        // 응답 본문 파싱
+        let result;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            result = await response.json();
+        } else {
+            const text = await response.text();
+            throw new Error(`서버 응답 오류: ${text || response.statusText}`);
+        }
+
+        // HTTP 상태 코드가 200-299가 아니면 에러 처리
         if (!response.ok) {
+            // API 응답 형식이 있는 경우 그대로 반환 (에러 처리 로직에서 처리)
+            if (result && result.result === 'ERROR') {
+                return result;
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const result = await response.json();
         return result;
     } catch (error) {
         handleApiError(error);
