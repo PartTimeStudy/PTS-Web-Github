@@ -14,16 +14,6 @@
             공지사항 내용을 여기에 작성하세요.
         </div>
 
-        <div class="form-group">
-            <label for="address">주소</label>
-            <input type="text" id="address" name="address" placeholder="주소를 검색해주세요 (클릭)" readonly>
-        </div>
-
-        <div class="form-group">
-            <label for="detailAddress">상세주소</label>
-            <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요">
-        </div>
-
         <button type="button" class="btn" id="withdrawalBtn">출금하기</button>
 
         <div id="message" class="message"></div>
@@ -31,78 +21,13 @@
 
     <div class="version-info" id="versionInfo"></div>
 
-    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="js/shared.js"></script>
     <script src="js/notice.js"></script>
     <script>
         // 버전 정보 표시
         document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
 
-        // 안드로이드 웹뷰 감지
-        function isAndroidWebView() {
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            return /android/i.test(userAgent) && /wv|WebView/i.test(userAgent);
-        }
-
-        // 로컬 파일로 열렸는지 확인
-        function isLocalFile() {
-            return window.location.protocol === 'file:';
-        }
-
-        // 주소 검색 함수
-        function openAddressSearch() {
-            if (typeof daum === 'undefined' || !daum.Postcode) {
-                alert('주소 검색 서비스를 불러올 수 없습니다. 페이지를 새로고침해주세요.');
-                return;
-            }
-            
-            new daum.Postcode({
-                oncomplete: function(data) {
-                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드
-                    let addr = ''; // 주소 변수
-                    let extraAddr = ''; // 참고항목 변수
-
-                    // 사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
-                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
-                        addr = data.roadAddress;
-                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
-                        addr = data.jibunAddress;
-                    }
-
-                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
-                    if(data.userSelectedType === 'R'){
-                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-                        if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-                            extraAddr += data.bname;
-                        }
-                        // 건물명이 있고, 공동주택일 경우 추가한다.
-                        if(data.buildingName !== '' && data.apartment === 'Y'){
-                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-                        }
-                        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                        if(extraAddr !== ''){
-                            extraAddr = ' (' + extraAddr + ')';
-                        }
-                    }
-
-                    // 주소 정보를 해당 필드에 넣는다.
-                    const addressEl = document.getElementById('address');
-                    const detailAddressEl = document.getElementById('detailAddress');
-                    const fullAddress = addr + extraAddr;
-                    
-                    if (addressEl) {
-                        addressEl.value = fullAddress;
-                        // localStorage에 주소만 저장 (상세주소는 별도로 저장)
-                        localStorage.setItem('userAddress', fullAddress);
-                    }
-                    // 커서를 상세주소 필드로 이동한다.
-                    if (detailAddressEl) detailAddressEl.focus();
-                }
-            }).open();
-        }
-
-        // 페이지 로드 시 저장된 주소 불러오기 및 안드로이드 웹뷰 처리
+        // 페이지 로드 시 접속 로그 저장
         document.addEventListener('DOMContentLoaded', async () => {
             // 접속 로그 저장 (인증된 경우에만)
             const token = checkAuth();
@@ -114,69 +39,10 @@
                     console.error('접속 로그 저장 실패:', error);
                 }
             }
-
-            const savedAddress = localStorage.getItem('userAddress');
-            const savedDetailAddress = localStorage.getItem('userDetailAddress');
-            const addressInput = document.getElementById('address');
-            const detailAddressInput = document.getElementById('detailAddress');
-            
-            // 로컬 파일로 열린 경우 자동으로 테스트 값 입력
-            if (isLocalFile()) {
-                if (!savedAddress) {
-                    addressInput.value = '서울특별시 강남구 테헤란로 123';
-                    localStorage.setItem('userAddress', addressInput.value);
-                } else {
-                    addressInput.value = savedAddress;
-                }
-                if (!savedDetailAddress) {
-                    detailAddressInput.value = '456동 789호';
-                    localStorage.setItem('userDetailAddress', detailAddressInput.value);
-                } else {
-                    detailAddressInput.value = savedDetailAddress;
-                }
-            } else {
-                // 로컬 파일이 아닌 경우 저장된 값 불러오기
-                if (savedAddress) {
-                    addressInput.value = savedAddress;
-                }
-                if (savedDetailAddress) {
-                    detailAddressInput.value = savedDetailAddress;
-                }
-            }
-
-            // 안드로이드 웹뷰인 경우 주소 입력 필드를 일반 텍스트 입력으로 변경
-            if (isAndroidWebView()) {
-                addressInput.removeAttribute('readonly');
-                addressInput.placeholder = '주소를 입력해주세요';
-                
-                // 주소 입력 시 localStorage에 저장
-                addressInput.addEventListener('input', (e) => {
-                    localStorage.setItem('userAddress', e.target.value);
-                });
-            } else {
-                // 안드로이드 웹뷰가 아닌 경우에만 주소 검색 팝업 열기
-                addressInput.addEventListener('click', openAddressSearch);
-            }
-        });
-
-        // 상세주소 입력 시 localStorage에 저장
-        document.getElementById('detailAddress').addEventListener('input', (e) => {
-            localStorage.setItem('userDetailAddress', e.target.value);
         });
 
         // 출금하기 버튼 클릭
-        document.getElementById('withdrawalBtn').addEventListener('click', async () => {
-            const addressInput = document.getElementById('address');
-            const detailAddressInput = document.getElementById('detailAddress');
-            const address = addressInput.value.trim();
-            const detailAddress = detailAddressInput.value.trim();
-            const messageEl = document.getElementById('message');
-            const withdrawalBtn = document.getElementById('withdrawalBtn');
-
-            // 메시지 초기화
-            messageEl.className = 'message';
-            messageEl.textContent = '';
-
+        document.getElementById('withdrawalBtn').addEventListener('click', () => {
             // 토큰 확인
             const token = checkAuth();
             if (!token) {
@@ -184,45 +50,8 @@
                 return;
             }
 
-            if (!address) {
-                messageEl.className = 'message error show';
-                messageEl.textContent = isAndroidWebView() ? '주소를 입력해주세요.' : '주소를 검색해주세요.';
-                return;
-            }
-
-            // 전체 주소 조합
-            const fullAddress = `${address} ${detailAddress}`.trim();
-
-            try {
-                // 버튼 비활성화
-                withdrawalBtn.disabled = true;
-                withdrawalBtn.textContent = '처리 중...';
-
-                messageEl.className = 'message loading show';
-                messageEl.textContent = '주소 저장 중...';
-
-                // 주소 저장
-                await saveAddress(fullAddress);
-
-                // 주소를 localStorage에 저장 (출금 페이지에서 사용 및 다음 접속 시 자동 입력)
-                localStorage.setItem('userAddress', address);
-                localStorage.setItem('userDetailAddress', detailAddress);
-
-                // 출금 페이지로 이동
-                window.location.href = 'withdrawal.html';
-            } catch (error) {
-                messageEl.className = 'message error show';
-                messageEl.textContent = error.message || '주소 저장에 실패했습니다.';
-                withdrawalBtn.disabled = false;
-                withdrawalBtn.textContent = '출금하기';
-            }
-        });
-
-        // Enter 키로 출금하기 (상세주소 입력 필드)
-        document.getElementById('detailAddress').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('withdrawalBtn').click();
-            }
+            // 주소 입력 페이지로 이동
+            window.location.href = 'address.html';
         });
     </script>
 </body>
