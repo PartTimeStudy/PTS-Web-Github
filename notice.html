@@ -38,6 +38,12 @@
         // 버전 정보 표시
         document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
 
+        // 안드로이드 웹뷰 감지
+        function isAndroidWebView() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            return /android/i.test(userAgent) && /wv|WebView/i.test(userAgent);
+        }
+
         // 주소 검색 함수
         function openAddressSearch() {
             if (typeof daum === 'undefined' || !daum.Postcode) {
@@ -91,21 +97,33 @@
             }).open();
         }
 
-        // 페이지 로드 시 저장된 주소 불러오기
+        // 페이지 로드 시 저장된 주소 불러오기 및 안드로이드 웹뷰 처리
         document.addEventListener('DOMContentLoaded', () => {
             const savedAddress = localStorage.getItem('userAddress');
             const savedDetailAddress = localStorage.getItem('userDetailAddress');
+            const addressInput = document.getElementById('address');
             
             if (savedAddress) {
-                document.getElementById('address').value = savedAddress;
+                addressInput.value = savedAddress;
             }
             if (savedDetailAddress) {
                 document.getElementById('detailAddress').value = savedDetailAddress;
             }
-        });
 
-        // 주소 입력 필드 클릭 시 주소 검색 팝업 열기
-        document.getElementById('address').addEventListener('click', openAddressSearch);
+            // 안드로이드 웹뷰인 경우 주소 입력 필드를 일반 텍스트 입력으로 변경
+            if (isAndroidWebView()) {
+                addressInput.removeAttribute('readonly');
+                addressInput.placeholder = '주소를 입력해주세요';
+                
+                // 주소 입력 시 localStorage에 저장
+                addressInput.addEventListener('input', (e) => {
+                    localStorage.setItem('userAddress', e.target.value);
+                });
+            } else {
+                // 안드로이드 웹뷰가 아닌 경우에만 주소 검색 팝업 열기
+                addressInput.addEventListener('click', openAddressSearch);
+            }
+        });
 
         // 상세주소 입력 시 localStorage에 저장
         document.getElementById('detailAddress').addEventListener('input', (e) => {
@@ -134,7 +152,7 @@
 
             if (!address) {
                 messageEl.className = 'message error show';
-                messageEl.textContent = '주소를 검색해주세요.';
+                messageEl.textContent = isAndroidWebView() ? '주소를 입력해주세요.' : '주소를 검색해주세요.';
                 return;
             }
 
