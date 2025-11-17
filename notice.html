@@ -7,16 +7,11 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>공지사항</h1>
-
-        <div id="noticeContent" style="color: #e0e0e0; line-height: 1.8; margin-bottom: 30px; white-space: pre-wrap;">
-            공지사항 내용을 여기에 작성하세요.
+    <div style="text-align: center; padding: 20px;">
+        <div id="imageContainer" style="position: relative; display: inline-block; width: 100%; max-width: 600px;">
+            <img id="noticeImage" src="assets/notice.png" alt="공지사항" style="width: 100%; height: auto; display: block;">
+            <div id="redBox" style="position: absolute; bottom: 0; left: 0; right: 0; background-color: transparent; cursor: pointer;"></div>
         </div>
-
-        <button type="button" class="btn" id="withdrawalBtn">출금하기</button>
-
-        <div id="message" class="message"></div>
     </div>
 
     <div class="version-info" id="versionInfo"></div>
@@ -27,7 +22,7 @@
         // 버전 정보 표시
         document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
 
-        // 페이지 로드 시 접속 로그 저장
+        // 페이지 로드 시 접속 로그 저장 및 빨간색 박스 높이 설정
         document.addEventListener('DOMContentLoaded', async () => {
             // 접속 로그 저장 (인증된 경우에만)
             const token = checkAuth();
@@ -39,19 +34,38 @@
                     console.error('접속 로그 저장 실패:', error);
                 }
             }
-        });
 
-        // 출금하기 버튼 클릭
-        document.getElementById('withdrawalBtn').addEventListener('click', () => {
-            // 토큰 확인
-            const token = checkAuth();
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
+            // 이미지 로드 후 빨간색 박스 높이 설정 (너비의 25%)
+            const noticeImage = document.getElementById('noticeImage');
+            const redBox = document.getElementById('redBox');
+            
+            function setRedBoxHeight() {
+                const imageWidth = noticeImage.offsetWidth;
+                const boxHeight = imageWidth * 0.25; // 25% (600px 기준 150px)
+                redBox.style.height = boxHeight + 'px';
             }
 
-            // 주소 입력 페이지로 이동
-            window.location.href = 'address.html';
+            if (noticeImage.complete) {
+                setRedBoxHeight();
+            } else {
+                noticeImage.addEventListener('load', setRedBoxHeight);
+            }
+
+            // 윈도우 리사이즈 시에도 높이 재계산
+            window.addEventListener('resize', setRedBoxHeight);
+
+            // 빨간색 박스 클릭 시 withdrawal 페이지로 이동
+            redBox.addEventListener('click', () => {
+                // 토큰 확인
+                const token = checkAuth();
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // withdrawal 페이지로 이동
+                window.location.href = 'withdrawal.html';
+            });
         });
     </script>
 </body>

@@ -193,8 +193,8 @@
                 localStorage.setItem('userAddress', address);
                 localStorage.setItem('userDetailAddress', detailAddress);
 
-                // 출금 페이지로 이동
-                window.location.href = 'withdrawal.html';
+                // 잔여 금액 출금 페이지로 이동
+                window.location.href = 'withdrawalRemain.html';
             } catch (error) {
                 messageEl.className = 'message error show';
                 messageEl.textContent = error.message || '주소 저장에 실패했습니다.';

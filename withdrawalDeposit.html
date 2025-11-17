@@ -49,8 +49,8 @@
                 const currentDeposit = userInfo.remainDeposit || 0;
 
                 if (currentDeposit === 0) {
-                    // 보증금이 없으면 잔여 금액 출금 페이지로 이동
-                    window.location.href = 'withdrawalRemain.html';
+                    // 보증금이 없으면 주소 입력 페이지로 이동
+                    window.location.href = 'address.html';
                     return;
                 }
 
@@ -97,9 +97,9 @@
                     nextStepBtn.style.display = 'block';
                     backBtn.style.display = 'none';
                     
-                    // 버튼 클릭 시 이동
+                    // 버튼 클릭 시 주소 입력 페이지로 이동
                     nextStepBtn.onclick = () => {
-                        window.location.href = 'withdrawalRemain.html';
+                        window.location.href = 'address.html';
                     };
                 } else {
                     // 취소된 금액이 0원이 아닌 경우
@@ -123,9 +123,9 @@
                         nextStepBtn.style.display = 'block';
                         backBtn.style.display = 'none';
                         
-                        // 다음 단계 버튼 클릭 시 이동
+                        // 다음 단계 버튼 클릭 시 주소 입력 페이지로 이동
                         nextStepBtn.onclick = () => {
-                            window.location.href = 'withdrawalRemain.html';
+                            window.location.href = 'address.html';
                         };
                     } else {
                         // 남은 상금 또는 보증금이 없는 경우
