@@ -2,6 +2,28 @@
 const APP_VERSION = '1.0.2';
 const BUILD_DATE = '2025-01-14';
 
+// 전역 fetch 래퍼 - 401 에러 처리
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+    try {
+        const response = await originalFetch.apply(this, args);
+        
+        // 401 Unauthorized 에러 처리 - 로그인 페이지로 리다이렉트
+        // no-cors 모드가 아닌 경우에만 처리 (no-cors에서는 status를 확인할 수 없음)
+        if (response.status === 401 && response.type !== 'opaque') {
+            removeToken();
+            // 현재 페이지가 login.html이 아닌 경우에만 리다이렉트
+            if (!window.location.pathname.includes('login.html')) {
+                window.location.href = 'login.html';
+            }
+        }
+        
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 // API 기본 URL (파일 실행 vs 웹 URL 접속 구분)
 const API_BASE_URL = (() => {
     // 파일로 실행할 때 (file://)
@@ -35,6 +57,13 @@ async function apiCall(endpoint, method = 'GET', data = null, headers = {}) {
         }
 
         const response = await fetch(url, options);
+        
+        // 401 Unauthorized 에러 처리 - 로그인 페이지로 리다이렉트
+        if (response.status === 401) {
+            removeToken();
+            window.location.href = 'login.html';
+            return;
+        }
         
         // 응답 본문 파싱
         let result;

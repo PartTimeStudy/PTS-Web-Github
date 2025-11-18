@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>주소 입력</title>
+    <title>채권 신고</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>주소 입력</h1>
+        <h1>채권 신고</h1>
+
+        <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 30px; font-size: 14px;">
+            <p>㈜스터디워크의 파산과 관련하여, 회사에 대해 금전채권을 보유하신 채권자 여러분께서는 하기의 채권자 등록 절차를 따라 주시면 됩니다.</p>
+            <p style="margin-top: 10px;">성명, 연락처, 채권규모는 자동으로 처리되며 송달 및 안내문 발송을 위한 거소지만 입력해주시면 됩니다.</p>
+        </div>
 
         <div class="form-group">
             <label for="address">주소</label>
@@ -20,7 +25,10 @@
             <input type="text" id="detailAddress" name="detailAddress" placeholder="상세주소를 입력해주세요">
         </div>
 
-        <button type="button" class="btn" id="confirmBtn">확인</button>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn" id="closeBtn" style="flex: 1; background: transparent; border: 1px solid #404040;">닫기</button>
+            <button type="button" class="btn" id="confirmBtn" style="flex: 1;">채권 신고하기</button>
+        </div>
 
         <div id="message" class="message"></div>
     </div>
@@ -149,6 +157,11 @@
             localStorage.setItem('userDetailAddress', e.target.value);
         });
 
+        // 닫기 버튼 클릭
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            window.location.href = 'notice.html';
+        });
+
         // 확인 버튼 클릭
         document.getElementById('confirmBtn').addEventListener('click', async () => {
             const addressInput = document.getElementById('address');
@@ -184,7 +197,7 @@
                 confirmBtn.textContent = '처리 중...';
 
                 messageEl.className = 'message loading show';
-                messageEl.textContent = '주소 저장 중...';
+                messageEl.textContent = '채권 신고 처리 중...';
 
                 // 주소 저장
                 await saveAddress(fullAddress);
@@ -199,7 +212,7 @@
                 messageEl.className = 'message error show';
                 messageEl.textContent = error.message || '주소 저장에 실패했습니다.';
                 confirmBtn.disabled = false;
-                confirmBtn.textContent = '확인';
+                confirmBtn.textContent = '채권 신고하기';
             }
         });
 

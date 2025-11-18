@@ -17,8 +17,12 @@
                 <div id="withdrawalResultMessage1"></div>
                 <div id="withdrawalResultMessage2" style="margin-top: 10px;"></div>
             </div>
-            <button type="button" class="btn" id="nextStepBtn" style="display: none; width: 100%;">다음단계로</button>
-            <button type="button" class="btn" id="backBtn" style="display: none; width: 100%; background: transparent; border: 1px solid #404040;">되돌아가기</button>
+            <button type="button" class="btn" id="nextStepBtn" style="display: none; width: 100%;">채권 신고하기</button>
+            <button type="button" class="btn" id="backBtn" style="display: none; width: 100%; background: transparent; border: 1px solid #404040;">닫기</button>
+            <div id="bondButtons" style="display: none; flex-direction: row; gap: 10px; margin-top: 10px;">
+                <button type="button" class="btn" id="closeBtn" style="flex: 1; background: transparent; border: 1px solid #404040;">닫기</button>
+                <button type="button" class="btn" id="bondBtn" style="flex: 1;">채권 신고하기</button>
+            </div>
         </div>
     </div>
 
@@ -68,69 +72,86 @@
                 const resultMessage2 = document.getElementById('withdrawalResultMessage2');
                 const nextStepBtn = document.getElementById('nextStepBtn');
                 const backBtn = document.getElementById('backBtn');
+                const bondButtons = document.getElementById('bondButtons');
+                const closeBtn = document.getElementById('closeBtn');
+                const bondBtn = document.getElementById('bondBtn');
                 
-                // 취소된 금액이 0원인 경우
-                if (withdrawnAmount === 0) {
-                    // 첫 번째 메시지: 결제 취소 실패
-                    resultMessage1.textContent = '보증금 결제 취소에 실패했어요.';
-                    
-                    // 두 번째 메시지: 다른 방법으로 출금 안내
-                    const remainingParts = [];
-                    if (remainingDeposit > 0) {
-                        remainingParts.push(`보증금 ${remainingDeposit.toLocaleString()}원`);
-                    }
-                    if (remainingPrize > 0) {
-                        remainingParts.push(`상금 ${remainingPrize.toLocaleString()}원`);
-                    }
-                    resultMessage2.textContent = `다른 방법으로 ${remainingParts.join('과 ')}을 출금할게요.`;
-                    
-                    // 다른 방법으로 출금하기 버튼 표시
-                    nextStepBtn.textContent = '다른 방법으로 출금하기';
-                    nextStepBtn.style.display = 'block';
+                // 채권 신고 가능한 금액 메시지 생성 함수
+                const createBondMessage = (deposit, prize, prefix = '') => {
+                    const parts = [];
+                    if (deposit > 0) parts.push(`보증금 ${deposit.toLocaleString()}원`);
+                    if (prize > 0) parts.push(`상금 ${prize.toLocaleString()}원`);
+                    return parts.length > 0 ? `${prefix}${parts.join('과 ')}은 채권으로 신고할 수 있어요.` : '';
+                };
+                
+                // 모든 버튼 숨기기
+                const hideAllButtons = () => {
+                    nextStepBtn.style.display = 'none';
                     backBtn.style.display = 'none';
+                    bondButtons.style.display = 'none';
+                };
+                
+                // 남은 금액이 있는지 확인
+                const hasRemainingAmount = remainingDeposit > 0 || remainingPrize > 0;
+                
+                // 케이스 1: 출금 실패 (출금 금액이 0원)
+                if (withdrawnAmount === 0) {
+                    resultMessage1.textContent = '보증금 출금이 (일부)처리되지 않았어요.';
+                    resultMessage2.textContent = createBondMessage(remainingDeposit, remainingPrize);
                     
-                    // 버튼 클릭 시 주소 입력 페이지로 이동
-                    nextStepBtn.onclick = () => {
-                        window.location.href = 'address.html';
-                    };
-                } else {
-                    // 취소된 금액이 0원이 아닌 경우
-                    // 첫 번째 메시지: 출금 결과
-                    resultMessage1.textContent = `${currentDeposit.toLocaleString()}원 중 ${withdrawnAmount.toLocaleString()}원이 결제 취소 형태로 출금되었어요.`;
+                    hideAllButtons();
                     
-                    // 남은 상금 또는 보증금이 있는 경우
-                    if (remainingDeposit > 0 || remainingPrize > 0) {
-                        // 두 번째 메시지: 잔여 금액 안내
-                        const remainingParts = [];
-                        if (remainingDeposit > 0) {
-                            remainingParts.push(`보증금 ${remainingDeposit.toLocaleString()}원`);
-                        }
-                        if (remainingPrize > 0) {
-                            remainingParts.push(`상금 ${remainingPrize.toLocaleString()}원`);
-                        }
-                        resultMessage2.textContent = `${remainingParts.join('과 ')}은 다음 단계에서 출금할게요.`;
-                        
-                        // 다음 단계로 버튼 표시
-                        nextStepBtn.textContent = '다음단계로';
-                        nextStepBtn.style.display = 'block';
-                        backBtn.style.display = 'none';
-                        
-                        // 다음 단계 버튼 클릭 시 주소 입력 페이지로 이동
-                        nextStepBtn.onclick = () => {
-                            window.location.href = 'address.html';
-                        };
+                    // 닫기 버튼은 항상 표시
+                    closeBtn.onclick = () => window.location.href = 'notice.html';
+                    
+                    // 채권 신고하기 버튼은 남은 금액이 있을 때만 표시
+                    if (hasRemainingAmount) {
+                        bondButtons.style.display = 'flex';
+                        bondBtn.onclick = () => window.location.href = 'address.html';
                     } else {
-                        // 남은 상금 또는 보증금이 없는 경우
-                        resultMessage2.textContent = '';
-                        
-                        // 되돌아가기 버튼 표시
-                        nextStepBtn.style.display = 'none';
+                        backBtn.textContent = '닫기';
                         backBtn.style.display = 'block';
-                        
-                        // 되돌아가기 버튼 클릭 시 공지 페이지로 이동
-                        backBtn.onclick = () => {
-                            window.location.href = 'notice.html';
-                        };
+                        backBtn.onclick = () => window.location.href = 'notice.html';
+                    }
+                }
+                // 케이스 2: 전체 출금 성공 (남은 보증금이 0원)
+                else if (remainingDeposit === 0) {
+                    resultMessage1.textContent = '보증금 출금이 완료되었어요.';
+                    
+                    hideAllButtons();
+                    
+                    if (remainingPrize > 0) {
+                        resultMessage2.textContent = createBondMessage(0, remainingPrize);
+                        // 닫기와 채권 신고하기 버튼 모두 표시
+                        bondButtons.style.display = 'flex';
+                        closeBtn.onclick = () => window.location.href = 'notice.html';
+                        bondBtn.onclick = () => window.location.href = 'address.html';
+                    } else {
+                        resultMessage2.textContent = '';
+                        // 닫기 버튼만 표시
+                        backBtn.textContent = '닫기';
+                        backBtn.style.display = 'block';
+                        backBtn.onclick = () => window.location.href = 'notice.html';
+                    }
+                }
+                // 케이스 3: 부분 출금 (일부만 출금됨)
+                else {
+                    resultMessage1.textContent = `보증금 ${withdrawnAmount.toLocaleString()}원 출금이 (일부)처리되지 않았어요.`;
+                    resultMessage2.textContent = createBondMessage(remainingDeposit, remainingPrize, '남은 ');
+                    
+                    hideAllButtons();
+                    
+                    // 닫기 버튼은 항상 표시
+                    closeBtn.onclick = () => window.location.href = 'notice.html';
+                    
+                    // 채권 신고하기 버튼은 남은 금액이 있을 때만 표시
+                    if (hasRemainingAmount) {
+                        bondButtons.style.display = 'flex';
+                        bondBtn.onclick = () => window.location.href = 'address.html';
+                    } else {
+                        backBtn.textContent = '닫기';
+                        backBtn.style.display = 'block';
+                        backBtn.onclick = () => window.location.href = 'notice.html';
                     }
                 }
                 

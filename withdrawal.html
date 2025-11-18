@@ -22,7 +22,7 @@
 
         <div id="message" class="message"></div>
 
-        <button type="button" class="btn" id="nextBtn" style="display: none; margin-top: 20px;">보증금부터 출금하기</button>
+        <button type="button" class="btn" id="nextBtn" style="display: none; margin-top: 20px;">보증금 출금하기</button>
         <button type="button" class="btn" id="backBtn" style="display: none; margin-top: 20px; background: transparent; border: 1px solid #404040;">돌아가기</button>
     </div>
 
@@ -49,7 +49,7 @@
                 const userInfo = await getUserInfo();
 
                 // 유저 안내 메시지 표시
-                userMessageEl.textContent = `${userInfo.name}님께서 현재 보유하고 계신 보증금과 상금은 아래와 같습니다.`;
+                userMessageEl.textContent = `${userInfo.name}님께서 보유하고 계신 보증금과 상금을 안내드립니다.`;
 
                 // 현재 금액 표시
                 if (userInfo.remainDeposit > 0) {

@@ -3,27 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>잔여 금액 출금</title>
+    <title>채권 신고 확인</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>잔여 금액 출금</h1>
+        <h1>채권 신고 확인</h1>
 
         <div id="withdrawalInfoSection" style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #404040;">
-            <h2 style="color: #e0e0e0; font-size: 20px; margin-bottom: 15px;">출금 정보</h2>
-            <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 20px;">
-                <div id="withdrawalMessage" style="margin-bottom: 15px;"></div>
-                <div style="padding: 15px; background: #2d2d2d; border-radius: 6px; font-size: 14px;">
-                    <div style="margin-bottom: 8px;"><strong>유저명:</strong> <span id="userName"></span></div>
-                    <div style="margin-bottom: 8px;"><strong>전화번호:</strong> <span id="userPhone"></span></div>
-                    <div style="margin-bottom: 8px;"><strong>잔여 보증금:</strong> <span id="remainingDeposit"></span></div>
-                    <div style="margin-bottom: 8px;"><strong>잔여 상금:</strong> <span id="remainingPrize"></span></div>
+            <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 30px; font-size: 14px; text-align: center;">
+                <p>등록해주신 채권은 법원과 파산관재인의 절차에 따라 공정하게 심사되고 배당될 수 있도록 회사는 끝까지 성실히 협조하겠습니다.</p>
+            </div>
+
+            <div style="color: #e0e0e0; line-height: 1.8; margin-bottom: 30px; font-size: 14px;">
+                <div style="padding: 15px; background: #2d2d2d; border-radius: 6px;">
+                    <div style="margin-bottom: 12px;"><strong>성명:</strong> <span id="userName"></span></div>
+                    <div style="margin-bottom: 12px;"><strong>연락처:</strong> <span id="userPhone"></span></div>
+                    <div style="margin-bottom: 12px;"><strong>채권 (보증금):</strong> <span id="remainingDeposit"></span></div>
+                    <div style="margin-bottom: 12px;"><strong>채권 (상금):</strong> <span id="remainingPrize"></span></div>
                     <div><strong>주소:</strong> <span id="address"></span></div>
                 </div>
             </div>
+
             <div id="message" class="message" style="margin-bottom: 15px;"></div>
-            <button type="button" class="btn" id="confirmBtn">확인</button>
+            <button type="button" class="btn" id="confirmBtn" style="width: 100%;">확인</button>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #404040;">
+                <div style="color: #999; font-size: 12px; line-height: 1.6;">
+                    <p style="margin-bottom: 15px; font-weight: 600; color: #e0e0e0;">*추가 안내</p>
+                    <p style="margin-bottom: 10px;">- 본 안내문은 회사가 법원에 제출할 채권자 목록을 보다 정확하게 작성하기 위한 사전 채권 정보 제출 절차에 관한 것이며, 향후 법원 및 파산관재인의 안내에 따라 별도의 정식 채권 신고 절차가 진행될 수 있습니다.</p>
+                    <p style="margin-bottom: 10px;">- 회사는 파트타임 스터디 서비스 내 이용·결제·보증금·상금 내역 등 기존 데이터베이스에 기반하여 채권자 목록을 작성하게 됩니다. 따라서 채권자 등록을 직접 하지 않으신 경우에도, 회사가 보유한 서비스 DB에 따라 보유 보증금 및 채권 금액이 채권자 목록에 반영될 수 있습니다.</p>
+                    <p>- 채권자 등록을 통해 수집되는 개인정보는 파산 신청 및 파산절차 진행을 위한 채권자 목록 작성, 법원 및 파산관재인의 채권자 통지·연락 목적에 한하여 사용되며, 관련 법령에서 정한 보존 기간 경과 후에는 지체 없이 안전한 방법으로 파기할 예정입니다.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -52,8 +64,6 @@
                 const userInfo = await getUserInfo();
 
                 // 정보 표시
-                const withdrawalMessage = '아래 정보로 보증금과 상금 출금을 요청할게요.';
-                document.getElementById('withdrawalMessage').innerHTML = withdrawalMessage;
                 document.getElementById('userName').textContent = userInfo.name || '-';
                 document.getElementById('userPhone').textContent = userInfo.phone || '-';
                 document.getElementById('remainingDeposit').textContent = userInfo.remainDeposit > 0 ? `${userInfo.remainDeposit.toLocaleString()}원` : '0원';
