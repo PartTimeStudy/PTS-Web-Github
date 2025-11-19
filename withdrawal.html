@@ -41,6 +41,13 @@
 
         // 페이지 로드 시 현재 금액 조회 및 표시
         document.addEventListener('DOMContentLoaded', async () => {
+            // 토큰 확인
+            const token = checkAuth();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
             const messageEl = document.getElementById('message');
             const userMessageEl = document.getElementById('userMessage');
             const currentDepositEl = document.getElementById('currentDeposit');
