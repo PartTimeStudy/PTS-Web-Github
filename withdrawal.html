@@ -97,11 +97,7 @@
 
                 // 다음 버튼 클릭 시 페이지 이동
                 nextBtn.addEventListener('click', () => {
-                    if (userInfo.remainDeposit > 0) {
-                        window.location.href = 'withdrawalDeposit.html';
-                    } else if (userInfo.remainPrize > 0) {
-                        window.location.href = 'address.html';
-                    }
+                    window.location.href = 'withdrawalDeposit.html';
                 });
             } catch (error) {
                 messageEl.className = 'message error show';

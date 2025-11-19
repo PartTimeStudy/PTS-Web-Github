@@ -48,10 +48,38 @@
                 // 현재 보증금 조회
                 const userInfo = await getUserInfo();
                 const currentDeposit = userInfo.remainDeposit || 0;
+                const currentPrize = userInfo.remainPrize || 0;
 
                 if (currentDeposit === 0) {
-                    // 보증금이 없으면 주소 입력 페이지로 이동
-                    window.location.href = 'address.html';
+                    // 보증금이 없으면 메시지 표시
+                    const resultSection = document.getElementById('withdrawalResultSection');
+                    const resultMessage1 = document.getElementById('withdrawalResultMessage1');
+                    const resultMessage2 = document.getElementById('withdrawalResultMessage2');
+                    const bondButtons = document.getElementById('bondButtons');
+                    const closeBtn = document.getElementById('closeBtn');
+                    const bondBtn = document.getElementById('bondBtn');
+
+                    // 메시지 표시
+                    resultMessage1.textContent = '출금될 보증금이 없습니다.';
+                    
+                    // 상금이 있으면 채권 신고 안내
+                    if (currentPrize > 0) {
+                        resultMessage2.textContent = `상금 ${currentPrize.toLocaleString()}원은 채권으로 신고할 수 있어요.`;
+                        bondButtons.style.display = 'flex';
+                        closeBtn.onclick = () => window.location.href = 'notice.html';
+                        bondBtn.onclick = () => window.location.href = 'address.html';
+                    } else {
+                        resultMessage2.textContent = '';
+                        // 닫기 버튼만 표시
+                        const backBtn = document.getElementById('backBtn');
+                        backBtn.textContent = '닫기';
+                        backBtn.style.display = 'block';
+                        backBtn.onclick = () => window.location.href = 'notice.html';
+                    }
+                    
+                    resultSection.style.display = 'block';
+                    messageEl.className = 'message';
+                    messageEl.textContent = '';
                     return;
                 }
 
