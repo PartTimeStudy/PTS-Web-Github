@@ -47,6 +47,9 @@
                 }
             }
 
+            // 공지 이미지 5번 연속 터치로 계정 정보 삭제 기능 설정
+            setupImageTapToLogout();
+
             // 이미지 기준 크기 (375px)에 맞춰 버튼 크기 조정
             const imageContainer = document.getElementById('imageContainer');
             const floatingBtn = document.getElementById('floatingBtn');

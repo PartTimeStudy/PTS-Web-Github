@@ -144,7 +144,7 @@
                         // 채권 등록 완료 스낵바 표시
                         showBondRegistrationSnackbar();
                     } catch (error) {
-                        // 에러 발생 시: 에러 메시지와 확인 버튼 다시 표시
+                        // 에러 발생 시: 에러 메시지와 닫기 버튼 표시
                         messageEl.className = 'message error show';
                         
                         // Google Forms 링크가 있는 경우 링크 포함하여 표시
@@ -154,13 +154,19 @@
                             messageEl.textContent = error.message || '정보 전송에 실패했습니다.';
                         }
                         
-                        confirmBtn.style.display = 'block';
-                        closeBtn.style.display = 'none';
+                        confirmBtn.style.display = 'none';
+                        closeBtn.style.display = 'block';
                     }
                 });
             } catch (error) {
                 messageEl.className = 'message error show';
                 messageEl.textContent = error.message || '처리 중 오류가 발생했습니다.';
+                
+                // 에러 발생 시 닫기 버튼 표시
+                const closeBtn = document.getElementById('closeBtn');
+                const confirmBtn = document.getElementById('confirmBtn');
+                confirmBtn.style.display = 'none';
+                closeBtn.style.display = 'block';
             }
         });
     </script>
