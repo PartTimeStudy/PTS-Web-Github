@@ -6,7 +6,7 @@
     <title>공지사항</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body style="padding: 0;">
+<body style="padding: 0; display: block; overflow-y: auto;">
     <div style="text-align: center; padding: 0px;">
         <div id="imageContainer" style="position: relative; display: inline-block; width: 100%; max-width: 600px;">
             <img id="noticeImage" src="assets/notice.png" alt="공지사항" style="width: 100%; height: auto;">
@@ -47,7 +47,7 @@
                 }
             }
 
-            // 공지 이미지 5번 연속 터치로 계정 정보 삭제 기능 설정
+            // 공지 이미지 7번 연속 클릭으로 계정 정보 삭제 기능 설정
             setupImageTapToLogout();
 
             // 이미지 기준 크기 (375px)에 맞춰 버튼 크기 조정

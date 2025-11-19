@@ -51,46 +51,31 @@ async function saveAccessLog(){
     }
 }
 
-// 공지 이미지 7번 연속 터치로 계정 정보 삭제 및 로그인 화면 이동
+// 공지 이미지 7번 연속 클릭으로 계정 정보 삭제 및 로그인 화면 이동
 function setupImageTapToLogout() {
     const noticeImage = document.getElementById('noticeImage');
     if (!noticeImage) return;
 
-    let tapCount = 0;
-    let tapTimer = null;
-    let lastTapTime = 0;
-    const TAP_TIMEOUT = 2000; // 2초 내에 7번 터치해야 함
-    const REQUIRED_TAPS = 7;
-    const CLICK_DELAY = 300; // 터치 후 클릭 이벤트 무시 시간 (ms)
+    let clickCount = 0;
+    let clickTimer = null;
+    const CLICK_TIMEOUT = 2000; // 2초 내에 7번 클릭해야 함
+    const REQUIRED_CLICKS = 7;
 
-    // 터치 이벤트 핸들러 (7번 터치로 계정 정보 삭제 및 로그인 화면 이동)
-    function handleTap(e) {
-        const currentTime = Date.now();
-        
-        // 터치 이벤트인 경우
-        if (e.type === 'touchstart') {
-            e.preventDefault();
-            lastTapTime = currentTime;
-        } else {
-            // 클릭 이벤트인 경우, 최근 터치 이벤트가 있었다면 무시 (중복 방지)
-            if (currentTime - lastTapTime < CLICK_DELAY) {
-                return;
-            }
-        }
-        
+    // 클릭 이벤트 핸들러 (7번 클릭으로 계정 정보 삭제 및 로그인 화면 이동)
+    function handleClick(e) {
         // 타이머 리셋
-        if (tapTimer) {
-            clearTimeout(tapTimer);
+        if (clickTimer) {
+            clearTimeout(clickTimer);
         }
 
-        tapCount++;
+        clickCount++;
 
-        // 7번 터치 완료
-        if (tapCount >= REQUIRED_TAPS) {
-            tapCount = 0;
-            if (tapTimer) {
-                clearTimeout(tapTimer);
-                tapTimer = null;
+        // 7번 클릭 완료
+        if (clickCount >= REQUIRED_CLICKS) {
+            clickCount = 0;
+            if (clickTimer) {
+                clearTimeout(clickTimer);
+                clickTimer = null;
             }
 
             // localStorage에서 계정 정보 삭제
@@ -101,17 +86,14 @@ function setupImageTapToLogout() {
             return;
         }
 
-        // 타이머 설정: 일정 시간 내에 다음 터치가 없으면 카운트 리셋
-        tapTimer = setTimeout(() => {
-            tapCount = 0;
-            tapTimer = null;
-        }, TAP_TIMEOUT);
+        // 타이머 설정: 일정 시간 내에 다음 클릭이 없으면 카운트 리셋
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+            clickTimer = null;
+        }, CLICK_TIMEOUT);
     }
 
-    // 터치 이벤트 리스너 추가 (모바일)
-    noticeImage.addEventListener('touchstart', handleTap, { passive: false });
-    
-    // 클릭 이벤트도 지원 (데스크톱 테스트용)
-    noticeImage.addEventListener('click', handleTap);
+    // 클릭 이벤트 리스너 추가
+    noticeImage.addEventListener('click', handleClick);
 }
 
