@@ -197,6 +197,37 @@ input:disabled {
     font-family: 'Courier New', monospace;
 }
 
+.floating-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 327px;
+    height: 54px;
+    border-radius: 11.54px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.floating-btn:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.floating-btn:active {
+    transform: translateX(-50%) translateY(0);
+}
+
 .snackbar {
     position: fixed;
     bottom: 20px;
@@ -260,6 +291,12 @@ input:disabled {
         padding: 4px 8px;
         bottom: 5px;
         right: 5px;
+    }
+
+    .floating-btn {
+        width: calc(100% - 40px);
+        max-width: 327px;
+        bottom: 15px;
     }
 }
 
