@@ -46,8 +46,13 @@
     <script src="js/withdrawal.js"></script>
     <script src="js/withdrawalRemain.js"></script>
     <script>
-        // 버전 정보 표시
-        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        // 버전 정보 표시 (dev 환경에서만)
+        const versionInfoEl = document.getElementById('versionInfo');
+        if (isDevEnvironment()) {
+            versionInfoEl.textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        } else {
+            versionInfoEl.style.display = 'none';
+        }
 
         // 페이지 로드 시 정보 표시 및 전송 준비
         document.addEventListener('DOMContentLoaded', async () => {

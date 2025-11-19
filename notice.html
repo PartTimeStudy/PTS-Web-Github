@@ -24,8 +24,13 @@
     <script src="js/shared.js"></script>
     <script src="js/notice.js"></script>
     <script>
-        // 버전 정보 표시
-        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        // 버전 정보 표시 (dev 환경에서만)
+        const versionInfoEl = document.getElementById('versionInfo');
+        if (isDevEnvironment()) {
+            versionInfoEl.textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        } else {
+            versionInfoEl.style.display = 'none';
+        }
 
         // 페이지 로드 시 접속 로그 저장 및 빨간색 박스 높이 설정
         document.addEventListener('DOMContentLoaded', async () => {

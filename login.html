@@ -35,8 +35,13 @@
     <script src="js/shared.js"></script>
     <script src="js/login.js"></script>
     <script>
-        // 버전 정보 표시
-        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        // 버전 정보 표시 (dev 환경에서만)
+        const versionInfoEl = document.getElementById('versionInfo');
+        if (isDevEnvironment()) {
+            versionInfoEl.textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        } else {
+            versionInfoEl.style.display = 'none';
+        }
 
         let currentPhone = '';
 

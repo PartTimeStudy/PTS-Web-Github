@@ -39,8 +39,13 @@
     <script src="js/shared.js"></script>
     <script src="js/address.js"></script>
     <script>
-        // 버전 정보 표시
-        document.getElementById('versionInfo').textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        // 버전 정보 표시 (dev 환경에서만)
+        const versionInfoEl = document.getElementById('versionInfo');
+        if (isDevEnvironment()) {
+            versionInfoEl.textContent = `v${APP_VERSION} (${BUILD_DATE})`;
+        } else {
+            versionInfoEl.style.display = 'none';
+        }
 
         // 안드로이드 웹뷰 감지
         function isAndroidWebView() {
