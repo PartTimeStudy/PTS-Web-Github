@@ -20,7 +20,10 @@
                     <div style="margin-bottom: 12px;"><strong>성명:</strong> <span id="userName"></span></div>
                     <div style="margin-bottom: 12px;"><strong>연락처:</strong> <span id="userPhone"></span></div>
                     <div style="margin-bottom: 12px;"><strong>채권 (보증금):</strong> <span id="remainingDeposit"></span></div>
-                    <div style="margin-bottom: 12px;"><strong>채권 (상금):</strong> <span id="remainingPrize"></span></div>
+                    <div style="margin-bottom: 12px;">
+                        <strong>채권 (상금):</strong> <span id="remainingPrize"></span>
+                        <span id="prizeNotice" style="display: none; margin-left: 8px; color: #999; font-size: 12px;"></span>
+                    </div>
                     <div><strong>주소:</strong> <span id="address"></span></div>
                 </div>
             </div>
@@ -90,7 +93,28 @@
                 document.getElementById('userName').textContent = userInfo.name || '-';
                 document.getElementById('userPhone').textContent = userInfo.phone || '-';
                 document.getElementById('remainingDeposit').textContent = userInfo.remainDeposit > 0 ? `${userInfo.remainDeposit.toLocaleString()}원` : '0원';
-                document.getElementById('remainingPrize').textContent = userInfo.remainPrize > 0 ? `${userInfo.remainPrize.toLocaleString()}원` : '0원';
+                
+                // 상금 표시 및 안내
+                const remainingPrize = userInfo.remainPrize || 0;
+                const prizeEl = document.getElementById('remainingPrize');
+                const prizeNoticeEl = document.getElementById('prizeNotice');
+                
+                if (remainingPrize > 0) {
+                    prizeEl.textContent = `${remainingPrize.toLocaleString()}원`;
+                    
+                    // 상금이 3000원 미만인 경우 안내 표시
+                    if (remainingPrize < 3000) {
+                        prizeNoticeEl.textContent = '(3000원 미만으로 채권으로 등록되지 않습니다)';
+                        prizeNoticeEl.style.display = 'inline';
+                        prizeNoticeEl.style.color = '#ff9800';
+                    } else {
+                        prizeNoticeEl.style.display = 'none';
+                    }
+                } else {
+                    prizeEl.textContent = '0원';
+                    prizeNoticeEl.style.display = 'none';
+                }
+                
                 document.getElementById('address').textContent = address || '-';
 
                 messageEl.className = 'message';
