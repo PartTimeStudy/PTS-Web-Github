@@ -41,6 +41,12 @@
     </div>
 
     <div class="version-info" id="versionInfo"></div>
+    
+    <div class="snackbar" id="bondRegistrationSnackbar">
+        <div style="font-weight: 600; margin-bottom: 12px; font-size: 16px;">채권 등록이 완료되었습니다.</div>
+        <div style="margin-bottom: 8px;">절차에 따라 공정하게 심사되고 배당될 수 있도록 노력하겠습니다.</div>
+        <div style="margin-top: 12px; font-size: 13px;">다시 한번 죄송합니다.</div>
+    </div>
 
     <script src="js/shared.js"></script>
     <script src="js/withdrawal.js"></script>
@@ -52,6 +58,17 @@
             versionInfoEl.textContent = `v${APP_VERSION} (${BUILD_DATE})`;
         } else {
             versionInfoEl.style.display = 'none';
+        }
+
+        // 채권 등록 완료 스낵바 표시 함수
+        function showBondRegistrationSnackbar() {
+            const snackbar = document.getElementById('bondRegistrationSnackbar');
+            snackbar.classList.add('show');
+            
+            // 5초 후 자동으로 숨기기
+            setTimeout(() => {
+                snackbar.classList.remove('show');
+            }, 5000);
         }
 
         // 페이지 로드 시 정보 표시 및 전송 준비
@@ -107,6 +124,9 @@
                         messageEl.className = 'message success show';
                         messageEl.textContent = '정보가 전송되었습니다.';
                         closeBtn.style.display = 'block';
+                        
+                        // 채권 등록 완료 스낵바 표시
+                        showBondRegistrationSnackbar();
                     } catch (error) {
                         // 에러 발생 시: 에러 메시지와 확인 버튼 다시 표시
                         messageEl.className = 'message error show';

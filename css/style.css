@@ -197,7 +197,50 @@ input:disabled {
     font-family: 'Courier New', monospace;
 }
 
+.snackbar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #e0e0e0;
+    padding: 20px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+    line-height: 1.6;
+    font-size: 14px;
+    display: none;
+    border: 1px solid #404040;
+}
+
+.snackbar.show {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
+    .snackbar {
+        width: calc(100% - 40px);
+        max-width: none;
+        padding: 16px 20px;
+        font-size: 13px;
+    }
+    
     body {
         padding: 10px;
     }
