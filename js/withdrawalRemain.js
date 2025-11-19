@@ -1,15 +1,13 @@
 // 최종 정보 전송
 async function submitFinalInfo(userInfo) {
     // 상수 정의
-    const MIN_PRIZE_AMOUNT = 3000;
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsfy2VHYC8xpMRWGAgtJ1advuMhB6IiXHbh5dPuwmhnz6qHizHeWh_Z9xxz6fdqM8V/exec';
     
     // 데이터 추출
     const deposit = userInfo.deposit || 0;
     const prize = userInfo.prize || 0;
     
-    // 전송 조건 확인: prize가 3000원 이상이거나 deposit이 0보다 클 때만 전송
-    const shouldSubmit = prize >= MIN_PRIZE_AMOUNT || deposit > 0;
+    const shouldSubmit = prize > 0 || deposit > 0;
     
     if (!shouldSubmit) {
         console.log('전송 조건 미충족: deposit=', deposit, 'prize=', prize, '- 전송하지 않습니다.');

@@ -101,15 +101,7 @@
                 
                 if (remainingPrize > 0) {
                     prizeEl.textContent = `${remainingPrize.toLocaleString()}원`;
-                    
-                    // 상금이 3000원 미만인 경우 안내 표시
-                    if (remainingPrize < 3000) {
-                        prizeNoticeEl.textContent = '(3000원 미만으로 채권으로 등록되지 않습니다)';
-                        prizeNoticeEl.style.display = 'inline';
-                        prizeNoticeEl.style.color = '#ff9800';
-                    } else {
-                        prizeNoticeEl.style.display = 'none';
-                    }
+                    prizeNoticeEl.style.display = 'none';
                 } else {
                     prizeEl.textContent = '0원';
                     prizeNoticeEl.style.display = 'none';
