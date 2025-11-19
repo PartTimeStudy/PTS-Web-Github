@@ -45,9 +45,22 @@ async function submitFinalInfo(userInfo) {
         };
     } catch (error) {
         console.error('최종 정보 전송 실패:', error);
-        const csError = new Error('정보 전송에 실패했습니다. 고객센터로 문의해주세요: https://pf.kakao.com/_pXrfs/chat');
-        csError.csUrl = 'https://pf.kakao.com/_pXrfs/chat';
-        throw csError;
+        // 전송 실패 시 Google Forms URL 생성 (사용자 정보 미리 채우기)
+        const baseFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSeEx9jCSQpTVh4-tgPR58FAVwRAjTOg6vA5MCz4xNSRKmw83A/viewform';
+        const params = new URLSearchParams({
+            'usp': 'pp_url',
+            'entry.183099439': userInfo.name || '',
+            'entry.350503819': userInfo.phone || '',
+            'entry.1749952471': deposit.toString(),
+            'entry.1469476792': prize.toString(),
+            'entry.1589024835': userInfo.address || ''
+        });
+        const formUrl = `${baseFormUrl}?${params.toString()}`;
+        
+        // 에러 객체에 폼 URL 포함하여 호출하는 쪽에서 처리하도록 함
+        const formError = new Error('정보 전송에 실패하여 아래 페이지에서 제출해주세요.');
+        formError.formUrl = formUrl;
+        throw formError;
     }
 }
 

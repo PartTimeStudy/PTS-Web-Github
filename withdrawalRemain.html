@@ -146,7 +146,14 @@
                     } catch (error) {
                         // 에러 발생 시: 에러 메시지와 확인 버튼 다시 표시
                         messageEl.className = 'message error show';
-                        messageEl.textContent = error.message || '정보 전송에 실패했습니다.';
+                        
+                        // Google Forms 링크가 있는 경우 링크 포함하여 표시
+                        if (error.formUrl) {
+                            messageEl.innerHTML = `${error.message || '정보 전송에 실패했습니다.'}<br><a href="${error.formUrl}" target="_blank" style="color: #4CAF50; text-decoration: underline; margin-top: 8px; display: inline-block;">다른 방법으로 제출하기</a>`;
+                        } else {
+                            messageEl.textContent = error.message || '정보 전송에 실패했습니다.';
+                        }
+                        
                         confirmBtn.style.display = 'block';
                         closeBtn.style.display = 'none';
                     }
