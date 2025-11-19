@@ -27,6 +27,7 @@
 
             <div id="message" class="message" style="margin-bottom: 15px;"></div>
             <button type="button" class="btn" id="confirmBtn" style="width: 100%;">확인</button>
+            <button type="button" class="btn" id="closeBtn" style="display: none; width: 100%; background: #2d2d2d; border: 1px solid #404040;">닫기</button>
 
             <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #404040;">
                 <div style="color: #999; font-size: 12px; line-height: 1.6;">
@@ -73,13 +74,19 @@
                 messageEl.className = 'message';
                 messageEl.textContent = '';
 
-                // 확인 버튼 클릭 시 정보 전송
-                document.getElementById('confirmBtn').addEventListener('click', async () => {
-                    try {
-                        const confirmBtn = document.getElementById('confirmBtn');
-                        confirmBtn.disabled = true;
-                        confirmBtn.textContent = '전송 중...';
+                const confirmBtn = document.getElementById('confirmBtn');
+                const closeBtn = document.getElementById('closeBtn');
 
+                // 닫기 버튼 클릭 시 공지 페이지로 이동
+                closeBtn.addEventListener('click', () => {
+                    window.location.href = 'notice.html';
+                });
+
+                // 확인 버튼 클릭 시 정보 전송
+                confirmBtn.addEventListener('click', async () => {
+                    try {
+                        // 제출 중: 버튼 숨기기
+                        confirmBtn.style.display = 'none';
                         messageEl.className = 'message loading show';
                         messageEl.textContent = '정보 전송 중...';
 
@@ -91,17 +98,16 @@
                             address: address
                         });
 
+                        // 제출 완료: 완료 메시지와 닫기 버튼 표시
                         messageEl.className = 'message success show';
                         messageEl.textContent = '정보가 전송되었습니다.';
-
-                        setTimeout(() => {
-                            window.location.href = 'notice.html';
-                        }, 1500);
+                        closeBtn.style.display = 'block';
                     } catch (error) {
+                        // 에러 발생 시: 에러 메시지와 확인 버튼 다시 표시
                         messageEl.className = 'message error show';
                         messageEl.textContent = error.message || '정보 전송에 실패했습니다.';
-                        document.getElementById('confirmBtn').disabled = false;
-                        document.getElementById('confirmBtn').textContent = '확인';
+                        confirmBtn.style.display = 'block';
+                        closeBtn.style.display = 'none';
                     }
                 });
             } catch (error) {
