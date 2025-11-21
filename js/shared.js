@@ -1,6 +1,6 @@
 // 버전 정보
-const APP_VERSION = '1.0.3';
-const BUILD_DATE = '2025-11-19';
+const APP_VERSION = '1.0.4 dev';
+const BUILD_DATE = '2025-11-21';
 
 // 전역 fetch 래퍼 - 401 에러 처리
 const originalFetch = window.fetch;
