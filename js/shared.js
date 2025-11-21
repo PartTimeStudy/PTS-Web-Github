@@ -27,7 +27,7 @@ window.fetch = async function(...args) {
 // API 기본 URL (파일 실행 vs 웹 URL 접속 구분)
 const API_BASE_URL = (() => {
 
-    // return 'https://live-api.partimestudy.com';
+    return 'https://live-api.partimestudy.com';
 
     // 파일로 실행할 때 (file://)
     if (window.location.protocol === 'file:') {
