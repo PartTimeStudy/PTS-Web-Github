@@ -87,14 +87,13 @@
                 messageEl.className = 'message loading show';
                 messageEl.textContent = `보증금 ${currentDeposit.toLocaleString()}원 출금 중...`;
 
-                // 보증금 출금 처리
-                await processDepositWithdrawal();
+                // 서버 요청 없이 무조건 실패 처리
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
 
-                // 출금 후 금액 재조회
-                const remainingInfo = await getUserInfo();
-                const remainingDeposit = remainingInfo.remainDeposit || 0;
-                const remainingPrize = remainingInfo.remainPrize || 0;
-                const withdrawnAmount = currentDeposit - remainingDeposit;
+                // 출금 실패로 처리 (금액 변동 없음)
+                const remainingDeposit = currentDeposit;
+                const remainingPrize = currentPrize;
+                const withdrawnAmount = 0;
 
                 // 출금 결과 메시지 표시
                 messageEl.className = 'message';

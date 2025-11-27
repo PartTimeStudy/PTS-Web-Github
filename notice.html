@@ -18,6 +18,9 @@
         </div>
     </div>
 
+    <!-- 플로팅 버튼 -->
+    <button id="floatingBtn" class="floating-btn">채권자 등록하기</button>
+
     <div class="version-info" id="versionInfo"></div>
 
     <script src="js/shared.js"></script>
@@ -47,6 +50,41 @@
             // 공지 이미지 7번 연속 클릭으로 계정 정보 삭제 기능 설정
             setupImageTapToLogout();
 
+            // 이미지 기준 크기 (375px)에 맞춰 버튼 크기 조정
+            const imageContainer = document.getElementById('imageContainer');
+            const floatingBtn = document.getElementById('floatingBtn');
+            const BASE_IMAGE_WIDTH = 375;
+            const BASE_BUTTON_WIDTH = 327;
+            const BASE_BUTTON_HEIGHT = 54;
+            const BASE_BUTTON_RADIUS = 11.54;
+
+            function adjustButtonSize() {
+                const containerWidth = imageContainer.offsetWidth;
+                const scale = containerWidth / BASE_IMAGE_WIDTH;
+                
+                floatingBtn.style.width = (BASE_BUTTON_WIDTH * scale) + 'px';
+                floatingBtn.style.height = (BASE_BUTTON_HEIGHT * scale) + 'px';
+                floatingBtn.style.borderRadius = (BASE_BUTTON_RADIUS * scale) + 'px';
+                floatingBtn.style.fontSize = (16 * scale) + 'px';
+            }
+
+            // 초기 크기 설정
+            adjustButtonSize();
+
+            // 윈도우 리사이즈 시에도 크기 재계산
+            window.addEventListener('resize', adjustButtonSize);
+
+            // 플로팅 버튼 클릭 시 withdrawal 페이지로 이동
+            floatingBtn.addEventListener('click', () => {
+                // 토큰 확인
+                const token = checkAuth();
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                // withdrawal 페이지로 이동
+                window.location.href = 'withdrawal.html';
+            });
         });
     </script>
 </body>
